@@ -5,6 +5,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:fitsSystemWindows="true"
     tools:context=".MainActivity">
 
     <com.google.android.material.appbar.AppBarLayout
@@ -16,66 +17,44 @@
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
-            android:background="?attr/colorPrimary"
-            app:titleTextColor="#FFFFFF">
+            android:background="?attr/colorPrimary">
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:orientation="horizontal"
+                android:orientation="vertical"
                 android:gravity="center_vertical"
+                android:paddingStart="16dp"
                 android:paddingEnd="16dp">
 
-                <!-- Приветствие и имя -->
-                <LinearLayout
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1"
-                    android:orientation="vertical"
-                    android:gravity="center_vertical">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Добро пожаловать,"
-                        android:textColor="#FFFFFF"
-                        android:textSize="12sp"
-                        android:alpha="0.9"/>
-
-                    <TextView
-                        android:id="@+id/tvUserName"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Пользователь"
-                        android:textColor="#FFFFFF"
-                        android:textSize="16sp"
-                        android:textStyle="bold"
-                        android:ellipsize="end"
-                        android:maxLines="1"/>
-                </LinearLayout>
-
-                <!-- Кнопка Выйти -->
-                <com.google.android.material.button.MaterialButton
-                    android:id="@+id/btnLogout"
+                <TextView
                     android:layout_width="wrap_content"
-                    android:layout_height="36dp"
-                    android:text="Выйти"
+                    android:layout_height="wrap_content"
+                    android:text="Добро пожаловать,"
+                    android:textColor="#FFFFFF"
                     android:textSize="12sp"
-                    android:paddingStart="12dp"
-                    android:paddingEnd="12dp"
-                    app:cornerRadius="6dp"
-                    style="@style/Widget.MaterialComponents.Button.OutlinedButton"
-                    app:strokeColor="#FFFFFF"
-                    app:strokeWidth="1dp"
-                    android:textColor="#FFFFFF"/>
+                    android:alpha="0.9"/>
 
+                <!-- Имя теперь кликабельно и ведёт в профиль -->
+                <TextView
+                    android:id="@+id/tvUserName"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Пользователь"
+                    android:textColor="#FFFFFF"
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    android:ellipsize="end"
+                    android:maxLines="1"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:padding="4dp"
+                    android:background="?attr/selectableItemBackgroundBorderless"/>
             </LinearLayout>
 
         </com.google.android.material.appbar.MaterialToolbar>
-
     </com.google.android.material.appbar.AppBarLayout>
 
-    <!-- SwipeRefreshLayout с RecyclerView -->
     <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
         android:id="@+id/swipeRefreshLayout"
         android:layout_width="match_parent"

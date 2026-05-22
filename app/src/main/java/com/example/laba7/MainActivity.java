@@ -4,7 +4,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.widget.TextView;
 import android.widget.Toast;
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -13,7 +12,6 @@ import com.example.laba7.adapter.PropertyAdapter;
 import com.example.laba7.api.RetrofitClient;
 import com.example.laba7.model.Property;
 import com.example.laba7.utils.SharedPreferencesManager;
-import com.google.android.material.button.MaterialButton;
 import java.util.List;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -24,7 +22,6 @@ public class MainActivity extends AppCompatActivity {
     private RecyclerView recyclerView;
     private SwipeRefreshLayout swipeRefreshLayout;
     private TextView tvUserName;
-    private MaterialButton btnLogout;
     private PropertyAdapter adapter;
     private SharedPreferencesManager prefsManager;
 
@@ -35,7 +32,6 @@ public class MainActivity extends AppCompatActivity {
 
         prefsManager = SharedPreferencesManager.getInstance(this);
 
-        // Проверка авторизации
         if (!prefsManager.isLoggedIn()) {
             navigateToLogin();
             return;
@@ -51,7 +47,6 @@ public class MainActivity extends AppCompatActivity {
         recyclerView = findViewById(R.id.recyclerView);
         swipeRefreshLayout = findViewById(R.id.swipeRefreshLayout);
         tvUserName = findViewById(R.id.tvUserName);
-        btnLogout = findViewById(R.id.btnLogout);
 
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         adapter = new PropertyAdapter(property -> {
@@ -64,44 +59,20 @@ public class MainActivity extends AppCompatActivity {
 
     private void setupListeners() {
         swipeRefreshLayout.setOnRefreshListener(this::loadProperties);
-        btnLogout.setOnClickListener(v -> showLogoutConfirmation());
+
+        // Клик по имени открывает профиль
+        tvUserName.setOnClickListener(v -> {
+            Intent intent = new Intent(MainActivity.this, ProfileActivity.class);
+            startActivity(intent);
+        });
     }
 
     private void loadUserName() {
         String userName = prefsManager.getUserName();
-
-        // Если имя пустое, показываем email
         if (userName == null || userName.isEmpty()) {
             userName = prefsManager.getUserEmail();
         }
-
-        // Если и email пустой, показываем заглушку
-        if (userName == null || userName.isEmpty()) {
-            userName = "Пользователь";
-        }
-
         tvUserName.setText(userName);
-    }
-
-    private void showLogoutConfirmation() {
-        new AlertDialog.Builder(this)
-                .setTitle("Выход из системы")
-                .setMessage("Вы действительно хотите выйти?")
-                .setPositiveButton("Выйти", (dialog, which) -> performLogout())
-                .setNegativeButton("Отмена", null)
-                .setCancelable(true)
-                .show();
-    }
-
-    private void performLogout() {
-        // Очищаем данные сессии
-        prefsManager.logout();
-
-        // Показываем сообщение
-        Toast.makeText(this, "Вы вышли из системы", Toast.LENGTH_SHORT).show();
-
-        // Переходим на экран входа
-        navigateToLogin();
     }
 
     private void navigateToLogin() {
@@ -151,7 +122,6 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        // Проверяем, не вышел ли пользователь
         if (!prefsManager.isLoggedIn()) {
             navigateToLogin();
         }

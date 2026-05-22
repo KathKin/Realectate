@@ -60,6 +60,9 @@ dependencies {
     // SwipeRefreshLayout
     implementation("androidx.swiperefreshlayout:swiperefreshlayout:1.1.0")
 
+    // CoordinatorLayout (для AppBarLayout)
+    implementation("androidx.coordinatorlayout:coordinatorlayout:1.2.0")
+
     // Material Design Components
     implementation("com.google.android.material:material:1.9.0")
 }

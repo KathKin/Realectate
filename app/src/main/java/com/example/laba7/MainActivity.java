@@ -3,27 +3,21 @@ package com.example.laba7;
 import android.content.Intent;
 import android.os.Bundle;
 import android.widget.TextView;
-import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
-import com.example.laba7.adapter.PropertyAdapter;
-import com.example.laba7.api.RetrofitClient;
-import com.example.laba7.model.Property;
+import androidx.viewpager2.widget.ViewPager2;
 import com.example.laba7.utils.SharedPreferencesManager;
-import java.util.List;
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
+import com.google.android.material.tabs.TabLayout;
+import com.google.android.material.tabs.TabLayoutMediator;
 
 public class MainActivity extends AppCompatActivity {
 
-    private RecyclerView recyclerView;
-    private SwipeRefreshLayout swipeRefreshLayout;
     private TextView tvUserName;
-    private PropertyAdapter adapter;
+    private TabLayout tabLayout;
+    private ViewPager2 viewPager;
+    private ViewPagerAdapter viewPagerAdapter;
     private SharedPreferencesManager prefsManager;
+
+    private final String[] tabTitles = {"Все", "Покупка", "Аренда"}; // Добавьте "Посуточно" если нужно
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,33 +32,27 @@ public class MainActivity extends AppCompatActivity {
         }
 
         initViews();
-        setupListeners();
+        setupViewPager();
+        setupTabs();
         loadUserName();
-        loadProperties();
     }
 
     private void initViews() {
-        recyclerView = findViewById(R.id.recyclerView);
-        swipeRefreshLayout = findViewById(R.id.swipeRefreshLayout);
         tvUserName = findViewById(R.id.tvUserName);
-
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        adapter = new PropertyAdapter(property -> {
-            Toast.makeText(MainActivity.this,
-                    "Выбрано: " + property.getTitle(),
-                    Toast.LENGTH_SHORT).show();
-        });
-        recyclerView.setAdapter(adapter);
+        tabLayout = findViewById(R.id.tabLayout);
+        viewPager = findViewById(R.id.viewPager);
     }
 
-    private void setupListeners() {
-        swipeRefreshLayout.setOnRefreshListener(this::loadProperties);
+    private void setupViewPager() {
+        viewPagerAdapter = new ViewPagerAdapter(this);
+        viewPager.setAdapter(viewPagerAdapter);
+        viewPager.setOffscreenPageLimit(3); // Кэшируем все вкладки
+    }
 
-        // Клик по имени открывает профиль
-        tvUserName.setOnClickListener(v -> {
-            Intent intent = new Intent(MainActivity.this, ProfileActivity.class);
-            startActivity(intent);
-        });
+    private void setupTabs() {
+        new TabLayoutMediator(tabLayout, viewPager, (tab, position) -> {
+            tab.setText(tabTitles[position]);
+        }).attach();
     }
 
     private void loadUserName() {
@@ -73,6 +61,11 @@ public class MainActivity extends AppCompatActivity {
             userName = prefsManager.getUserEmail();
         }
         tvUserName.setText(userName);
+
+        tvUserName.setOnClickListener(v -> {
+            Intent intent = new Intent(MainActivity.this, ProfileActivity.class);
+            startActivity(intent);
+        });
     }
 
     private void navigateToLogin() {
@@ -80,43 +73,6 @@ public class MainActivity extends AppCompatActivity {
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(intent);
         finish();
-    }
-
-    private void loadProperties() {
-        swipeRefreshLayout.setRefreshing(true);
-
-        Call<List<Property>> call = RetrofitClient.getApiService().getAllProperties();
-        call.enqueue(new Callback<List<Property>>() {
-            @Override
-            public void onResponse(Call<List<Property>> call, Response<List<Property>> response) {
-                swipeRefreshLayout.setRefreshing(false);
-
-                if (response.isSuccessful() && response.body() != null) {
-                    adapter.setProperties(response.body());
-                    if (!response.body().isEmpty()) {
-                        Toast.makeText(MainActivity.this,
-                                "Загружено: " + response.body().size() + " объявлений",
-                                Toast.LENGTH_SHORT).show();
-                    } else {
-                        Toast.makeText(MainActivity.this,
-                                "Список объявлений пуст",
-                                Toast.LENGTH_SHORT).show();
-                    }
-                } else {
-                    Toast.makeText(MainActivity.this,
-                            "Ошибка сервера: " + response.code(),
-                            Toast.LENGTH_SHORT).show();
-                }
-            }
-
-            @Override
-            public void onFailure(Call<List<Property>> call, Throwable t) {
-                swipeRefreshLayout.setRefreshing(false);
-                Toast.makeText(MainActivity.this,
-                        "Ошибка сети: " + t.getMessage(),
-                        Toast.LENGTH_LONG).show();
-            }
-        });
     }
 
     @Override

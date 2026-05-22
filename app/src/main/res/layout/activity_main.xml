@@ -13,6 +13,7 @@
         android:layout_height="wrap_content"
         android:theme="@style/Theme.Laba7">
 
+        <!-- Верхняя панель с приветствием -->
         <com.google.android.material.appbar.MaterialToolbar
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
@@ -35,7 +36,6 @@
                     android:textSize="12sp"
                     android:alpha="0.9"/>
 
-                <!-- Имя теперь кликабельно и ведёт в профиль -->
                 <TextView
                     android:id="@+id/tvUserName"
                     android:layout_width="wrap_content"
@@ -44,30 +44,31 @@
                     android:textColor="#FFFFFF"
                     android:textSize="16sp"
                     android:textStyle="bold"
-                    android:ellipsize="end"
-                    android:maxLines="1"
                     android:clickable="true"
                     android:focusable="true"
-                    android:padding="4dp"
-                    android:background="?attr/selectableItemBackgroundBorderless"/>
+                    android:padding="4dp"/>
             </LinearLayout>
 
         </com.google.android.material.appbar.MaterialToolbar>
+
+        <!-- Вкладки -->
+        <com.google.android.material.tabs.TabLayout
+            android:id="@+id/tabLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:tabTextColor="#FFFFFF"
+            app:tabSelectedTextColor="#FFFFFF"
+            app:tabIndicatorColor="#FFFFFF"
+            app:tabMode="fixed"
+            app:tabGravity="fill"/>
+
     </com.google.android.material.appbar.AppBarLayout>
 
-    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-        android:id="@+id/swipeRefreshLayout"
+    <!-- ViewPager2 для переключения вкладок -->
+    <androidx.viewpager2.widget.ViewPager2
+        android:id="@+id/viewPager"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior">
-
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/recyclerView"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:padding="8dp"
-            android:clipToPadding="false"/>
-
-    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+        app:layout_behavior="@string/appbar_scrolling_view_behavior"/>
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

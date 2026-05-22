@@ -65,4 +65,10 @@ dependencies {
 
     // Material Design Components
     implementation("com.google.android.material:material:1.9.0")
+
+    // ViewPager2
+    implementation("androidx.viewpager2:viewpager2:1.0.0")
+
+    // Fragment
+    implementation("androidx.fragment:fragment-ktx:1.6.2")
 }

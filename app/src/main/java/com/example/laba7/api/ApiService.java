@@ -23,6 +23,9 @@ public interface ApiService {
     @GET("api/properties/{id}")
     Call<Property> getPropertyById(@Path("id") Long id);
 
+    @GET("api/users/check-realtor")
+    Call<Map<String, Object>> checkRealtorStatus(@Query("email") String email);
+
     // Внутренние классы для запросов
     class UserRegisterRequest {
         private String email;

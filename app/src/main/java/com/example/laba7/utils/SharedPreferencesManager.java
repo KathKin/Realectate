@@ -8,6 +8,7 @@ public class SharedPreferencesManager {
     private static final String KEY_IS_LOGGED_IN = "isLoggedIn";
     private static final String KEY_USER_EMAIL = "userEmail";
     private static final String KEY_USER_NAME = "userName";
+    private static final String KEY_USER_ROLE = "userRole"; // ← НОВОЕ
     private static final String KEY_TOKEN = "token";
 
     private static SharedPreferencesManager instance;
@@ -26,36 +27,37 @@ public class SharedPreferencesManager {
         return instance;
     }
 
-    // Сохранить данные после входа
-    public void saveLoginData(String email, String name, String token) {
+    // ✅ Обновлено: теперь сохраняет роль
+    public void saveLoginData(String email, String name, String token, String role) {
         editor.putBoolean(KEY_IS_LOGGED_IN, true);
         editor.putString(KEY_USER_EMAIL, email);
         editor.putString(KEY_USER_NAME, name);
         editor.putString(KEY_TOKEN, token);
+        editor.putString(KEY_USER_ROLE, role);
         editor.apply();
     }
 
-    // Проверка, авторизован ли пользователь
     public boolean isLoggedIn() {
         return prefs.getBoolean(KEY_IS_LOGGED_IN, false);
     }
 
-    // Получить email
     public String getUserEmail() {
         return prefs.getString(KEY_USER_EMAIL, "");
     }
 
-    // Получить имя
     public String getUserName() {
         return prefs.getString(KEY_USER_NAME, "");
     }
 
-    // Получить токен
+    // ✅ НОВОЕ: получение роли
+    public String getUserRole() {
+        return prefs.getString(KEY_USER_ROLE, "CLIENT");
+    }
+
     public String getToken() {
         return prefs.getString(KEY_TOKEN, "");
     }
 
-    // Выйти из системы
     public void logout() {
         editor.clear();
         editor.apply();

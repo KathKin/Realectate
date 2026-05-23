@@ -37,8 +37,11 @@ public class ProfileActivity extends AppCompatActivity {
     private void loadData() {
         tvName.setText(prefs.getUserName());
         tvEmail.setText(prefs.getUserEmail());
-        // По умолчанию роль "Клиент", если у вас есть сохранение роли, добавьте её сюда
-        tvRole.setText("Клиент");
+
+        // ✅ ИСПРАВЛЕНО: отображаем реальную роль
+        String role = prefs.getUserRole();
+        String displayRole = "AGENT".equals(role) ? "Риэлтор" : "Клиент";
+        tvRole.setText(displayRole);
     }
 
     private void setupListeners() {
@@ -58,7 +61,6 @@ public class ProfileActivity extends AppCompatActivity {
         prefs.logout();
         Toast.makeText(this, "Вы вышли из системы", Toast.LENGTH_SHORT).show();
 
-        // Возвращаемся на экран входа
         Intent intent = new Intent(this, LoginActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(intent);

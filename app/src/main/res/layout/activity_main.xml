@@ -13,7 +13,6 @@
         android:layout_height="wrap_content"
         android:theme="@style/Theme.Laba7">
 
-        <!-- Верхняя панель с приветствием и кнопкой фильтра -->
         <com.google.android.material.appbar.MaterialToolbar
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
@@ -28,7 +27,7 @@
                 android:paddingStart="16dp"
                 android:paddingEnd="8dp">
 
-                <!-- Левая часть: Приветствие -->
+                <!-- Приветствие -->
                 <LinearLayout
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
@@ -57,36 +56,38 @@
                         android:padding="4dp"/>
                 </LinearLayout>
 
-                <!-- Правая часть: Кнопка фильтра -->
+                <!-- 🔥 Кнопка переключения (только для риэлтора) -->
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnToggleView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="32dp"
+                    android:text="🏠 Объявления"
+                    android:textSize="12sp"
+                    android:visibility="gone"
+                    android:layout_marginStart="8dp"
+                    style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                    android:textColor="#FFFFFF"
+                    app:strokeColor="#FFFFFF"
+                    app:cornerRadius="16dp"/>
+
+                <!-- Кнопка фильтра -->
                 <ImageButton
                     android:id="@+id/btnFilter"
-                    android:layout_width="48dp"
-                    android:layout_height="48dp"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:layout_marginStart="4dp"
                     android:src="@android:drawable/ic_menu_sort_by_size"
                     android:background="?attr/selectableItemBackgroundBorderless"
                     android:contentDescription="Фильтры"
-                    android:padding="12dp"
+                    android:padding="8dp"
                     android:tint="#FFFFFF"/>
             </LinearLayout>
-
         </com.google.android.material.appbar.MaterialToolbar>
-
-        <!-- Вкладки (обязательно с этим ID!) -->
-        <com.google.android.material.tabs.TabLayout
-            android:id="@+id/tabLayout"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:tabTextColor="#FFFFFF"
-            app:tabSelectedTextColor="#FFFFFF"
-            app:tabIndicatorColor="#FFFFFF"
-            app:tabMode="fixed"
-            app:tabGravity="fill"/>
-
     </com.google.android.material.appbar.AppBarLayout>
 
-    <!-- 🔥 ViewPager2 (обязательно с этим ID!) -->
-    <androidx.viewpager2.widget.ViewPager2
-        android:id="@+id/viewPager"
+    <!--  Контейнер для фрагментов -->
+    <FrameLayout
+        android:id="@+id/fragmentContainer"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         app:layout_behavior="@string/appbar_scrolling_view_behavior"/>

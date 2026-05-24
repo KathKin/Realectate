@@ -14,8 +14,10 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import com.example.laba7.adapter.PropertyAdapter;
 import com.example.laba7.api.RetrofitClient;
 import com.example.laba7.model.Property;
+import com.example.laba7.utils.SharedPreferencesManager;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -27,7 +29,7 @@ public class PropertyListFragment extends Fragment {
     private RecyclerView recyclerView;
     private SwipeRefreshLayout swipeRefreshLayout;
     private PropertyAdapter adapter;
-    private String tabType; // SALE, RENT, ALL
+    private String tabType;
     private List<Property> allProperties = new ArrayList<>();
 
     // Поля фильтров
@@ -39,7 +41,7 @@ public class PropertyListFragment extends Fragment {
     public static PropertyListFragment newInstance(String type) {
         PropertyListFragment fragment = new PropertyListFragment();
         Bundle args = new Bundle();
-        args.putString(ARG_TYPE, type);
+        args.putString(ARG_TYPE, type != null ? type : "ALL");
         fragment.setArguments(args);
         return fragment;
     }
@@ -49,6 +51,9 @@ public class PropertyListFragment extends Fragment {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
             tabType = getArguments().getString(ARG_TYPE);
+            if (tabType == null) tabType = "ALL"; // Защита от null
+        } else {
+            tabType = "ALL";
         }
     }
 
@@ -61,9 +66,25 @@ public class PropertyListFragment extends Fragment {
         swipeRefreshLayout = view.findViewById(R.id.swipeRefreshLayout);
 
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-        adapter = new PropertyAdapter(property -> {
-            Toast.makeText(getContext(), "Выбрано: " + property.getTitle(), Toast.LENGTH_SHORT).show();
-        });
+
+        SharedPreferencesManager prefsManager = SharedPreferencesManager.getInstance(requireContext());
+
+        adapter = new PropertyAdapter(new PropertyAdapter.OnItemClickListener() {
+            @Override
+            public void onItemClick(Property property) {
+                Toast.makeText(getContext(),
+                        "Выбрано: " + property.getTitle(),
+                        Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onItemRespond(Property property) {
+                if (getActivity() instanceof MainActivity) {
+                    ((MainActivity) getActivity()).showRespondDialog(property);
+                }
+            }
+        }, prefsManager.getUserRole());
+
         recyclerView.setAdapter(adapter);
 
         swipeRefreshLayout.setOnRefreshListener(this::loadProperties);
@@ -73,63 +94,77 @@ public class PropertyListFragment extends Fragment {
     }
 
     private void loadProperties() {
+        if (getContext() == null) return;
+
         swipeRefreshLayout.setRefreshing(true);
         Call<List<Property>> call = RetrofitClient.getApiService().getAllProperties();
         call.enqueue(new Callback<List<Property>>() {
             @Override
             public void onResponse(Call<List<Property>> call, Response<List<Property>> response) {
+                if (!isAdded()) return;
+
                 swipeRefreshLayout.setRefreshing(false);
                 if (response.isSuccessful() && response.body() != null) {
                     allProperties = response.body();
-                    applyFilters(); // Применяем фильтры сразу после загрузки
+                    applyFilters();
                 } else {
-                    Toast.makeText(getContext(), "Ошибка сервера", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getContext(), "Ошибка сервера: " + response.code(), Toast.LENGTH_SHORT).show();
                 }
             }
             @Override
             public void onFailure(Call<List<Property>> call, Throwable t) {
+                if (!isAdded()) return;
+
                 swipeRefreshLayout.setRefreshing(false);
                 Toast.makeText(getContext(), "Ошибка сети: " + t.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });
     }
 
-    // 🔥 МЕТОД ДЛЯ ПРИМЕНЕНИЯ ФИЛЬТРОВ
+    // 🔥 ИСПРАВЛЕННЫЙ МЕТОД С ЗАЩИТОЙ ОТ NULL
     public void applyFilters() {
+        if (allProperties == null) return;
+
         List<Property> filteredList = new ArrayList<>();
 
         for (Property p : allProperties) {
-            // 1. Фильтр по вкладке (Покупка/Аренда)
-            if (!"ALL".equals(tabType) && !tabType.equals(p.getType())) continue;
+            if (p == null) continue;
 
-            // 2. Фильтр по городу
+            // 1. Фильтр по вкладке (Покупка/Аренда) - БЕЗОПАСНОЕ СРАВНЕНИЕ
+            String propertyType = p.getType() != null ? p.getType() : "";
+            if (!"ALL".equals(tabType) && !Objects.equals(tabType, propertyType)) continue;
+
+            // 2. Фильтр по городу - с проверкой на null
             if (filterCity != null && !filterCity.isEmpty()) {
-                if (!p.getCity().toLowerCase().contains(filterCity.toLowerCase())) continue;
+                String city = p.getCity() != null ? p.getCity() : "";
+                if (!city.toLowerCase().contains(filterCity.toLowerCase())) continue;
             }
 
             // 3. Фильтр по цене
-            double price = p.getPrice().doubleValue();
+            Double price = p.getPrice();
+            if (price == null) continue;
+
             if (filterMinPrice != null && price < filterMinPrice) continue;
             if (filterMaxPrice != null && price > filterMaxPrice) continue;
 
-            // 4. Фильтр по типу недвижимости (если есть в title/description или отдельном поле)
-            // Для примера проверяем title. В реальном проекте лучше добавить поле propertyType в модель
-            if (filterPropertyType != null) {
-                String title = p.getTitle().toLowerCase();
-                boolean matches = title.contains(filterPropertyType.toLowerCase());
-                if (!matches) continue;
+            // 4. Фильтр по типу недвижимости - безопасное сравнение
+            if (filterPropertyType != null && !filterPropertyType.isEmpty()) {
+                String title = p.getTitle() != null ? p.getTitle() : "";
+                if (!title.toLowerCase().contains(filterPropertyType.toLowerCase())) continue;
             }
 
             filteredList.add(p);
         }
 
-        adapter.setProperties(filteredList);
-        if (filteredList.isEmpty() && !allProperties.isEmpty()) {
+        if (adapter != null) {
+            adapter.setProperties(filteredList);
+        }
+
+        if (filteredList.isEmpty() && !allProperties.isEmpty() && isAdded()) {
             Toast.makeText(getContext(), "Ничего не найдено по фильтрам", Toast.LENGTH_SHORT).show();
         }
     }
 
-    // Сброс фильтров
     public void resetFilters() {
         filterCity = null;
         filterMinPrice = null;

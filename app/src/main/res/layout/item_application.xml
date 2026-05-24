@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="8dp"
+    app:cardElevation="2dp"
+    app:cardCornerRadius="8dp"
+    app:cardBackgroundColor="#FFFFFF">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp">
+
+        <!-- Имя клиента и телефон -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical">
+
+            <TextView
+                android:id="@+id/tvClientName"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Иван Иванов"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:textColor="#333333"/>
+
+            <TextView
+                android:id="@+id/tvClientPhone"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="+7 777 123 45 67"
+                android:textSize="14sp"
+                android:textColor="#2196F3"/>
+        </LinearLayout>
+
+        <!-- ID объявления -->
+        <TextView
+            android:id="@+id/tvPropertyId"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Объявление #12"
+            android:textSize="13sp"
+            android:textColor="#757575"
+            android:layout_marginTop="6dp"/>
+
+        <!-- Сообщение клиента -->
+        <TextView
+            android:id="@+id/tvMessage"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Здравствуйте, интересует просмотр..."
+            android:textSize="14sp"
+            android:textColor="#555555"
+            android:layout_marginTop="8dp"
+            android:background="#F0F0F0"
+            android:padding="10dp"
+            android:radius="6dp"/>
+
+        <!-- Статус и дата -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginTop="12dp"
+            android:gravity="center_vertical">
+
+            <TextView
+                android:id="@+id/tvStatus"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="NEW"
+                android:textSize="12sp"
+                android:textStyle="bold"
+                android:textColor="#FFFFFF"
+                android:background="#FF9800"
+                android:paddingStart="8dp"
+                android:paddingEnd="8dp"
+                android:paddingTop="4dp"
+                android:paddingBottom="4dp"
+                android:radius="4dp"/>
+
+            <TextView
+                android:id="@+id/tvDate"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="23.05.2026 14:30"
+                android:textSize="12sp"
+                android:textColor="#999999"
+                android:layout_marginStart="12dp"/>
+        </LinearLayout>
+    </LinearLayout>
+</com.google.android.material.card.MaterialCardView>

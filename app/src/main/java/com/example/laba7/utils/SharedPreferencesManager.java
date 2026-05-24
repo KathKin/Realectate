@@ -8,7 +8,8 @@ public class SharedPreferencesManager {
     private static final String KEY_IS_LOGGED_IN = "isLoggedIn";
     private static final String KEY_USER_EMAIL = "userEmail";
     private static final String KEY_USER_NAME = "userName";
-    private static final String KEY_USER_ROLE = "userRole"; // ← НОВОЕ
+    private static final String KEY_USER_ROLE = "userRole";
+    private static final String KEY_USER_ID = "userId"; // ← НОВОЕ
     private static final String KEY_TOKEN = "token";
 
     private static SharedPreferencesManager instance;
@@ -27,14 +28,20 @@ public class SharedPreferencesManager {
         return instance;
     }
 
-    // ✅ Обновлено: теперь сохраняет роль
-    public void saveLoginData(String email, String name, String token, String role) {
+    // ✅ Обновлённый метод: сохраняет ID пользователя
+    public void saveLoginData(String email, String name, String token, String role, Long userId) {
         editor.putBoolean(KEY_IS_LOGGED_IN, true);
         editor.putString(KEY_USER_EMAIL, email);
         editor.putString(KEY_USER_NAME, name);
         editor.putString(KEY_TOKEN, token);
         editor.putString(KEY_USER_ROLE, role);
+        editor.putLong(KEY_USER_ID, userId != null ? userId : 0L);
         editor.apply();
+    }
+
+    // Для обратной совместимости
+    public void saveLoginData(String email, String name, String token, String role) {
+        saveLoginData(email, name, token, role, 0L);
     }
 
     public boolean isLoggedIn() {
@@ -49,13 +56,17 @@ public class SharedPreferencesManager {
         return prefs.getString(KEY_USER_NAME, "");
     }
 
-    // ✅ НОВОЕ: получение роли
     public String getUserRole() {
         return prefs.getString(KEY_USER_ROLE, "CLIENT");
     }
 
     public String getToken() {
         return prefs.getString(KEY_TOKEN, "");
+    }
+
+    // ✅ НОВОЕ: получение ID пользователя
+    public Long getUserId() {
+        return prefs.getLong(KEY_USER_ID, 0L);
     }
 
     public void logout() {

@@ -21,12 +21,9 @@ public class LoginActivity extends AppCompatActivity {
     private TextInputEditText etEmail, etPassword;
     private MaterialButton btnLogin;
     private TextView tvRegister;
-
-    // Поля для проверки риэлтора
     private MaterialButton btnCheckRealtor;
     private TextView tvRealtorStatus;
     private boolean isCheckingRealtor = false;
-
     private SharedPreferencesManager prefsManager;
 
     @Override
@@ -49,20 +46,16 @@ public class LoginActivity extends AppCompatActivity {
         etPassword = findViewById(R.id.etPassword);
         btnLogin = findViewById(R.id.btnLogin);
         tvRegister = findViewById(R.id.tvRegister);
-
-        // Инициализация полей проверки статуса
         btnCheckRealtor = findViewById(R.id.btnCheckRealtor);
         tvRealtorStatus = findViewById(R.id.tvRealtorStatus);
     }
 
     private void setupListeners() {
         btnLogin.setOnClickListener(v -> performLogin());
-
         tvRegister.setOnClickListener(v ->
                 startActivity(new Intent(LoginActivity.this, RegisterActivity.class))
         );
 
-        // Активация кнопки проверки при валидном email
         etEmail.addTextChangedListener(new TextWatcher() {
             @Override public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
             @Override public void onTextChanged(CharSequence s, int start, int before, int count) {
@@ -94,7 +87,6 @@ public class LoginActivity extends AppCompatActivity {
                         if (response.isSuccessful() && response.body() != null) {
                             Boolean isRealtor = (Boolean) response.body().get("isRealtor");
                             String role = (String) response.body().get("role");
-
                             if (isRealtor != null && isRealtor) {
                                 tvRealtorStatus.setText("✅ Подтверждён: " + role);
                                 tvRealtorStatus.setTextColor(0xFF2E7D32);
@@ -103,11 +95,10 @@ public class LoginActivity extends AppCompatActivity {
                                 tvRealtorStatus.setTextColor(0xFFC62828);
                             }
                         } else {
-                            tvRealtorStatus.setText("️ Пользователь не найден");
+                            tvRealtorStatus.setText("⚠️ Пользователь не найден");
                             tvRealtorStatus.setTextColor(0xFFE65100);
                         }
                     }
-
                     @Override
                     public void onFailure(Call<Map<String, Object>> call, Throwable t) {
                         isCheckingRealtor = false;
@@ -144,22 +135,22 @@ public class LoginActivity extends AppCompatActivity {
                 if (response.isSuccessful() && response.body() != null) {
                     var authResponse = response.body();
                     if (authResponse.getUser() != null) {
-                        // ✅ ИСПРАВЛЕНО: сохраняем роль пользователя
                         String userRole = authResponse.getUser().getRole() != null
                                 ? authResponse.getUser().getRole()
                                 : "CLIENT";
 
+                        // ✅ ВАЖНО: передаём ID пользователя
                         prefsManager.saveLoginData(
                                 authResponse.getUser().getEmail(),
                                 authResponse.getUser().getFullName(),
                                 authResponse.getToken() != null ? authResponse.getToken() : "",
-                                userRole
+                                userRole,
+                                authResponse.getUser().getId()
                         );
 
                         Toast.makeText(LoginActivity.this,
                                 "Добро пожаловать, " + authResponse.getUser().getFullName() + "!",
                                 Toast.LENGTH_SHORT).show();
-
                         navigateToMain();
                     } else {
                         Toast.makeText(LoginActivity.this, "Ошибка входа", Toast.LENGTH_SHORT).show();

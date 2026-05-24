@@ -1,5 +1,6 @@
 package com.example.laba7.api;
 
+import com.example.laba7.model.Application;
 import com.example.laba7.model.Property;
 import com.example.laba7.model.User;
 import java.util.List;
@@ -26,6 +27,12 @@ public interface ApiService {
     @GET("api/users/check-realtor")
     Call<Map<String, Object>> checkRealtorStatus(@Query("email") String email);
 
+    @POST("api/applications")
+    Call<Application> submitApplication(@Body Application application);
+
+    // Риэлтор получает список заявок на свои объявления
+    @GET("api/applications/agent/{agentId}")
+    Call<List<Application>> getAgentApplications(@Path("agentId") Long agentId);
     // Внутренние классы для запросов
     class UserRegisterRequest {
         private String email;
@@ -62,4 +69,5 @@ public interface ApiService {
         public String getToken() { return token; }
         public String getMessage() { return message; }
     }
+
 }

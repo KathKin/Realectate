@@ -10,7 +10,7 @@ public class Property {
     private String description;
     private String city;
     private String address;
-    private BigDecimal price;
+    private Number price;
     private Integer rooms;
     private Double area;
     private String imageUrl;
@@ -44,7 +44,7 @@ public class Property {
     public String getDescription() { return description; }
     public String getCity() { return city; }
     public String getAddress() { return address; }
-    public BigDecimal getPrice() { return price; }
+    public Double getPrice() { return price != null ? price.doubleValue() : 0.0; }
     public Integer getRooms() { return rooms; }
     public Double getArea() { return area; }
     public String getImageUrl() { return imageUrl; }
@@ -58,7 +58,7 @@ public class Property {
     public void setDescription(String description) { this.description = description; }
     public void setCity(String city) { this.city = city; }
     public void setAddress(String address) { this.address = address; }
-    public void setPrice(BigDecimal price) { this.price = price; }
+    public void setPrice(Number price) { this.price = price; }
     public void setRooms(Integer rooms) { this.rooms = rooms; }
     public void setArea(Double area) { this.area = area; }
     public void setImageUrl(String imageUrl) { this.imageUrl = imageUrl; }

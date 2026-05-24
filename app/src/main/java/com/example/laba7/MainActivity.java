@@ -2,25 +2,33 @@ package com.example.laba7;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.TextView;
+import android.widget.Toast;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
-import androidx.viewpager2.widget.ViewPager2;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
+import com.example.laba7.adapter.PropertyAdapter;
+import com.example.laba7.api.RetrofitClient;
+import com.example.laba7.model.Application;
+import com.example.laba7.model.Property;
 import com.example.laba7.utils.SharedPreferencesManager;
-import com.google.android.material.tabs.TabLayout;
-import com.google.android.material.tabs.TabLayoutMediator;
+import com.google.android.material.button.MaterialButton;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
-public class MainActivity extends AppCompatActivity implements FilterDialogFragment.OnFilterApplyListener {
+public class MainActivity extends AppCompatActivity {
 
     private TextView tvUserName;
     private ImageButton btnFilter;
-    private TabLayout tabLayout;
-    private ViewPager2 viewPager;
-    private ViewPagerAdapter viewPagerAdapter;
+    private MaterialButton btnToggleView;
     private SharedPreferencesManager prefsManager;
-
-    private final String[] tabTitles = {"Все", "Покупка", "Аренда"};
+    private boolean isShowingApplications = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,37 +43,62 @@ public class MainActivity extends AppCompatActivity implements FilterDialogFragm
         }
 
         initViews();
-        setupViewPager();
-        setupTabs();
+        setupListeners();
         loadUserName();
-        setupFilterButton();
+        setupUserRole();
     }
 
     private void initViews() {
         tvUserName = findViewById(R.id.tvUserName);
         btnFilter = findViewById(R.id.btnFilter);
-        tabLayout = findViewById(R.id.tabLayout);
-        viewPager = findViewById(R.id.viewPager);
+        btnToggleView = findViewById(R.id.btnToggleView);
     }
 
-    private void setupViewPager() {
-        viewPagerAdapter = new ViewPagerAdapter(this);
-        viewPager.setAdapter(viewPagerAdapter);
-        viewPager.setOffscreenPageLimit(3);
-    }
+    private void setupListeners() {
+        tvUserName.setOnClickListener(v -> {
+            Intent intent = new Intent(MainActivity.this, ProfileActivity.class);
+            startActivity(intent);
+        });
 
-    private void setupTabs() {
-        new TabLayoutMediator(tabLayout, viewPager, (tab, position) -> {
-            tab.setText(tabTitles[position]);
-        }).attach();
-    }
-
-    private void setupFilterButton() {
         btnFilter.setOnClickListener(v -> {
             FilterDialogFragment dialog = new FilterDialogFragment();
-            dialog.setListener(this);
+            Fragment currentFragment = getSupportFragmentManager().findFragmentById(R.id.fragmentContainer);
+            if (currentFragment instanceof FilterDialogFragment.OnFilterApplyListener) {
+                dialog.setListener((FilterDialogFragment.OnFilterApplyListener) currentFragment);
+            }
             dialog.show(getSupportFragmentManager(), "FilterDialog");
         });
+
+        btnToggleView.setOnClickListener(v -> toggleView());
+    }
+
+    private void toggleView() {
+        if (!isShowingApplications) {
+            // 🔥 Сейчас мы на Объявлениях → переключаем на Заявки
+            btnToggleView.setText("🏠 Объявления");
+            loadFragment(new ApplicationsFragment());
+            isShowingApplications = true;
+        } else {
+            // 🔥 Сейчас мы на Заявках → переключаем обратно на Объявления
+            btnToggleView.setText("📥 Заявки");
+            loadFragment(new PropertyListFragment());
+            isShowingApplications = false;
+        }
+    }
+
+    private void setupUserRole() {
+        String role = prefsManager.getUserRole();
+
+        if ("AGENT".equals(role)) {
+            btnToggleView.setVisibility(View.VISIBLE);
+            // 🔥 По умолчанию кнопка ведет на Заявки, а экран показывает Объявления
+            btnToggleView.setText("📥 Заявки");
+            isShowingApplications = false;
+            loadFragment(new PropertyListFragment()); // Сразу грузим список недвижимости
+        } else {
+            btnToggleView.setVisibility(View.GONE);
+            loadFragment(new PropertyListFragment());
+        }
     }
 
     private void loadUserName() {
@@ -74,29 +107,13 @@ public class MainActivity extends AppCompatActivity implements FilterDialogFragm
             userName = prefsManager.getUserEmail();
         }
         tvUserName.setText(userName);
-
-        tvUserName.setOnClickListener(v -> {
-            Intent intent = new Intent(MainActivity.this, ProfileActivity.class);
-            startActivity(intent);
-        });
     }
 
-    // 🔥 Реализация интерфейса фильтрации
-    @Override
-    public void onFilterApplied(String city, Double minPrice, Double maxPrice, String type) {
-        PropertyListFragment currentFragment = getCurrentFragment();
-        if (currentFragment != null) {
-            currentFragment.setFilterCity(city);
-            currentFragment.setFilterPrice(minPrice, maxPrice);
-            currentFragment.setFilterPropertyType(type);
-            currentFragment.applyFilters();
-        }
-    }
-
-    // Безопасное получение текущего фрагмента из ViewPager2
-    private PropertyListFragment getCurrentFragment() {
-        Fragment fragment = getSupportFragmentManager().findFragmentByTag("f" + viewPager.getCurrentItem());
-        return (fragment instanceof PropertyListFragment) ? (PropertyListFragment) fragment : null;
+    private void loadFragment(Fragment fragment) {
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        FragmentTransaction transaction = fragmentManager.beginTransaction();
+        transaction.replace(R.id.fragmentContainer, fragment);
+        transaction.commit();
     }
 
     private void navigateToLogin() {
@@ -112,5 +129,79 @@ public class MainActivity extends AppCompatActivity implements FilterDialogFragm
         if (!prefsManager.isLoggedIn()) {
             navigateToLogin();
         }
+    }
+
+    // 🔥 НОВЫЙ ПУБЛИЧНЫЙ МЕТОД: Диалог отправки отклика
+    public void showRespondDialog(Property property) {
+        // 1. Получаем ID текущего пользователя
+        Long clientId = prefsManager.getUserId();
+        if (clientId == null || clientId <= 0) {
+            Toast.makeText(this, "⚠️ Ошибка авторизации. Войдите заново.", Toast.LENGTH_LONG).show();
+            return;
+        }
+
+        // Проверяем, что у объявления есть ID
+        if (property.getId() == null) {
+            Toast.makeText(this, "⚠️ Ошибка: ID объявления не найден", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        // 2. Создаём поле ввода сообщения
+        final EditText inputMessage = new EditText(this);
+        inputMessage.setHint("Сообщение агенту (необязательно)");
+        inputMessage.setPadding(40, 30, 40, 30);
+        inputMessage.setMaxLines(3);
+
+        new AlertDialog.Builder(this)
+                .setTitle("Отклик на объявление")
+                .setMessage("Отправить заявку на:\n\"" + property.getTitle() + "\"?")
+                .setView(inputMessage) // Добавляем поле ввода в диалог
+                .setPositiveButton("Отправить", (dialog, which) -> {
+                    String messageText = inputMessage.getText().toString().trim();
+                    if (messageText.isEmpty()) {
+                        messageText = "Здравствуйте, интересует ваше объявление. Готов обсудить детали.";
+                    }
+
+                    // 3. Формируем объект заявки
+                    Application application = new Application();
+                    application.setPropertyId(property.getId());
+                    application.setClientId(clientId);
+                    application.setClientName(prefsManager.getUserName());
+                    // Пока используем email как контакт (в реальном проекте добавьте поле телефона в профиль)
+                    application.setClientPhone(prefsManager.getUserEmail());
+                    application.setMessage(messageText);
+
+                    // 4. Отправляем на сервер
+                    sendApplication(application);
+                })
+                .setNegativeButton("Отмена", null)
+                .show();
+    }
+
+    //  НОВЫЙ МЕТОД: Реальная отправка запроса к API
+    private void sendApplication(Application app) {
+        Toast.makeText(this, " Отправка заявки...", Toast.LENGTH_SHORT).show();
+
+        RetrofitClient.getApiService().submitApplication(app).enqueue(new Callback<Application>() {
+            @Override
+            public void onResponse(Call<Application> call, Response<Application> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    Toast.makeText(MainActivity.this,
+                            "✅ Заявка успешно отправлена!\nАгент свяжется с вами.",
+                            Toast.LENGTH_LONG).show();
+                } else {
+                    Toast.makeText(MainActivity.this,
+                            "❌ Ошибка сервера: " + response.code() + " " + response.message(),
+                            Toast.LENGTH_LONG).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Application> call, Throwable t) {
+                Toast.makeText(MainActivity.this,
+                        "❌ Ошибка сети: " + t.getMessage(),
+                        Toast.LENGTH_LONG).show();
+            }
+        });
     }
 }

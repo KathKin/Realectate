@@ -15,6 +15,7 @@ public class Property {
     private Double area;
     private String imageUrl;
     private String type;
+    private Long agentId;
 
     @SerializedName("agent")
     private User agent;
@@ -51,6 +52,7 @@ public class Property {
     public String getType() { return type; }
     public User getAgent() { return agent; }
     public String getCreatedAt() { return createdAt; }
+    public Long getAgentId() { return agentId; }
 
     // ===== Сеттеры =====
     public void setId(Long id) { this.id = id; }
@@ -65,4 +67,5 @@ public class Property {
     public void setType(String type) { this.type = type; }
     public void setAgent(User agent) { this.agent = agent; }
     public void setCreatedAt(String createdAt) { this.createdAt = createdAt; }
+    public void setAgentId(Long agentId) { this.agentId = agentId; }
 }

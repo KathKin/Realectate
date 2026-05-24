@@ -12,6 +12,9 @@ import okhttp3.ResponseBody;
 import retrofit2.http.Multipart;
 import retrofit2.http.POST;
 import retrofit2.http.Part;
+import okhttp3.ResponseBody;
+import retrofit2.http.DELETE;
+import retrofit2.http.Path;
 
 public interface ApiService {
 
@@ -46,6 +49,8 @@ public interface ApiService {
     // Создание нового объявления
     @POST("api/properties")
     Call<com.example.laba7.model.Property> createProperty(@Body com.example.laba7.model.Property property);
+    @DELETE("api/properties/{id}")
+    Call<ResponseBody> deleteProperty(@Path("id") Long id);
     class UserRegisterRequest {
         private String email;
         private String password;
@@ -81,5 +86,6 @@ public interface ApiService {
         public String getToken() { return token; }
         public String getMessage() { return message; }
     }
+
 
 }

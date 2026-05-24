@@ -3,9 +3,11 @@ package com.example.laba7.adapter;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
+import com.bumptech.glide.Glide;
 import com.example.laba7.R;
 import com.example.laba7.model.Property;
 import com.google.android.material.button.MaterialButton;
@@ -13,23 +15,24 @@ import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
-import android.widget.ImageView;
-import com.bumptech.glide.Glide;
 
 public class PropertyAdapter extends RecyclerView.Adapter<PropertyAdapter.ViewHolder> {
 
     private List<Property> propertyList = new ArrayList<>();
     private OnItemClickListener listener;
-    private String currentUserRole; // "CLIENT" или "AGENT"
+    private String currentUserRole;
+    private Long currentUserId;
 
     public interface OnItemClickListener {
         void onItemClick(Property property);
         void onItemRespond(Property property);
+        void onItemDelete(Property property);
     }
 
-    public PropertyAdapter(OnItemClickListener listener, String currentUserRole) {
+    public PropertyAdapter(OnItemClickListener listener, String currentUserRole, Long currentUserId) {
         this.listener = listener;
         this.currentUserRole = currentUserRole;
+        this.currentUserId = currentUserId;
     }
 
     public void setProperties(List<Property> properties) {
@@ -42,7 +45,7 @@ public class PropertyAdapter extends RecyclerView.Adapter<PropertyAdapter.ViewHo
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.item_property, parent, false);
-        return new ViewHolder(view, currentUserRole); // ← Передаём роль в ViewHolder
+        return new ViewHolder(view, currentUserRole, currentUserId);
     }
 
     @Override
@@ -60,12 +63,17 @@ public class PropertyAdapter extends RecyclerView.Adapter<PropertyAdapter.ViewHo
         ImageView ivPropertyImage;
         TextView tvTitle, tvCity, tvPrice, tvRooms, tvArea, tvType;
         MaterialButton btnRespond;
-        private String currentUserRole; // ← Поле для хранения роли
+        MaterialButton btnDelete;
 
-        public ViewHolder(@NonNull View itemView, String currentUserRole) {
+        private String currentUserRole;
+        private Long currentUserId;
+
+        public ViewHolder(@NonNull View itemView, String currentUserRole, Long currentUserId) {
             super(itemView);
+            this.currentUserRole = currentUserRole;
+            this.currentUserId = currentUserId;
+
             ivPropertyImage = itemView.findViewById(R.id.ivPropertyImage);
-            this.currentUserRole = currentUserRole; // ← Сохраняем роль
             tvTitle = itemView.findViewById(R.id.tvTitle);
             tvCity = itemView.findViewById(R.id.tvCity);
             tvPrice = itemView.findViewById(R.id.tvPrice);
@@ -73,9 +81,11 @@ public class PropertyAdapter extends RecyclerView.Adapter<PropertyAdapter.ViewHo
             tvArea = itemView.findViewById(R.id.tvArea);
             tvType = itemView.findViewById(R.id.tvType);
             btnRespond = itemView.findViewById(R.id.btnRespond);
+            btnDelete = itemView.findViewById(R.id.btnDelete);
         }
 
         public void bind(Property property, OnItemClickListener listener) {
+            // Загрузка текста
             tvTitle.setText(property.getTitle());
             tvCity.setText(property.getCity() + ", " + property.getAddress());
 
@@ -88,37 +98,56 @@ public class PropertyAdapter extends RecyclerView.Adapter<PropertyAdapter.ViewHo
             String typeText = "SALE".equals(property.getType()) ? "Продажа" : "Аренда";
             tvType.setText(typeText);
 
-            // 🔥 ЗАГРУЗКА ФОТО С ПОМОЩЬЮ GLIDE
-            String imageUrl = property.getImageUrl();
-            if (imageUrl != null && !imageUrl.isEmpty()) {
-                // Загружаем фото с сервера
-                Glide.with(itemView.getContext())
-                        .load(imageUrl)
-                        .placeholder(android.R.drawable.ic_menu_gallery)  // Заглушка при загрузке
-                        .error(android.R.drawable.ic_menu_report_image)    // Если ошибка
-                        .centerCrop()
-                        .into(ivPropertyImage);
-            } else {
-                // Если фото нет — показываем заглушку
-                ivPropertyImage.setImageResource(android.R.drawable.ic_menu_gallery);
-            }
-
             if ("RENT".equals(property.getType())) {
                 tvType.setBackgroundColor(0xFFFF9800);
             } else {
                 tvType.setBackgroundColor(0xFF4CAF50);
             }
 
-            // 🔥 Показываем кнопку только клиентам
-            if ("CLIENT".equals(currentUserRole)) {
-                btnRespond.setVisibility(View.VISIBLE);
-                btnRespond.setOnClickListener(v -> {
+            String imageUrl = property.getImageUrl();
+            if (imageUrl != null && !imageUrl.isEmpty()) {
+                Glide.with(itemView.getContext())
+                        .load(imageUrl)
+                        .placeholder(android.R.drawable.ic_menu_gallery)
+                        .error(android.R.drawable.ic_menu_report_image)
+                        .centerCrop()
+                        .into(ivPropertyImage);
+            } else {
+                ivPropertyImage.setImageResource(android.R.drawable.ic_menu_gallery);
+            }
+
+            Long propertyAgentId = property.getAgentId();
+
+            if (propertyAgentId == null && property.getAgent() != null) {
+                propertyAgentId = property.getAgent().getId();
+            }
+
+            boolean isOwner = "AGENT".equals(currentUserRole) &&
+                    propertyAgentId != null &&
+                    propertyAgentId.equals(currentUserId);
+
+            if (isOwner) {
+                btnDelete.setVisibility(View.VISIBLE);
+                btnRespond.setVisibility(View.GONE);
+
+                btnDelete.setOnClickListener(v -> {
                     if (listener != null) {
-                        listener.onItemRespond(property);
+                        listener.onItemDelete(property);
                     }
                 });
             } else {
-                btnRespond.setVisibility(View.GONE);
+                btnDelete.setVisibility(View.GONE);
+
+                if ("CLIENT".equals(currentUserRole)) {
+                    btnRespond.setVisibility(View.VISIBLE);
+                    btnRespond.setOnClickListener(v -> {
+                        if (listener != null) {
+                            listener.onItemRespond(property);
+                        }
+                    });
+                } else {
+                    btnRespond.setVisibility(View.GONE);
+                }
             }
 
             itemView.setOnClickListener(v -> {

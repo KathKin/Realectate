@@ -95,6 +95,20 @@
                 app:strokeColor="#2196F3"
                 app:strokeWidth="1dp"
                 android:textColor="#2196F3"/>
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnDelete"
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:text="🗑️ Удалить объявление"
+                android:textSize="14sp"
+                android:visibility="gone"
+                android:layout_marginTop="8dp"
+                android:layout_marginBottom="4dp"
+                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                app:strokeColor="#F44336"
+                app:strokeWidth="1dp"
+                android:textColor="#F44336"/>
         </LinearLayout>
 
     </LinearLayout>

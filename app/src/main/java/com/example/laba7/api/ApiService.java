@@ -7,6 +7,11 @@ import java.util.List;
 import java.util.Map;
 import retrofit2.Call;
 import retrofit2.http.*;
+import okhttp3.MultipartBody;
+import okhttp3.ResponseBody;
+import retrofit2.http.Multipart;
+import retrofit2.http.POST;
+import retrofit2.http.Part;
 
 public interface ApiService {
 
@@ -33,7 +38,14 @@ public interface ApiService {
     // Риэлтор получает список заявок на свои объявления
     @GET("api/applications/agent/{agentId}")
     Call<List<Application>> getAgentApplications(@Path("agentId") Long agentId);
-    // Внутренние классы для запросов
+
+    @Multipart
+    @POST("api/files/upload")
+    Call<ResponseBody> uploadFile(@Part MultipartBody.Part file);
+
+    // Создание нового объявления
+    @POST("api/properties")
+    Call<com.example.laba7.model.Property> createProperty(@Body com.example.laba7.model.Property property);
     class UserRegisterRequest {
         private String email;
         private String password;

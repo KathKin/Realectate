@@ -13,6 +13,8 @@ import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import android.widget.ImageView;
+import com.bumptech.glide.Glide;
 
 public class PropertyAdapter extends RecyclerView.Adapter<PropertyAdapter.ViewHolder> {
 
@@ -55,12 +57,14 @@ public class PropertyAdapter extends RecyclerView.Adapter<PropertyAdapter.ViewHo
     }
 
     static class ViewHolder extends RecyclerView.ViewHolder {
+        ImageView ivPropertyImage;
         TextView tvTitle, tvCity, tvPrice, tvRooms, tvArea, tvType;
         MaterialButton btnRespond;
         private String currentUserRole; // ← Поле для хранения роли
 
         public ViewHolder(@NonNull View itemView, String currentUserRole) {
             super(itemView);
+            ivPropertyImage = itemView.findViewById(R.id.ivPropertyImage);
             this.currentUserRole = currentUserRole; // ← Сохраняем роль
             tvTitle = itemView.findViewById(R.id.tvTitle);
             tvCity = itemView.findViewById(R.id.tvCity);
@@ -83,6 +87,21 @@ public class PropertyAdapter extends RecyclerView.Adapter<PropertyAdapter.ViewHo
 
             String typeText = "SALE".equals(property.getType()) ? "Продажа" : "Аренда";
             tvType.setText(typeText);
+
+            // 🔥 ЗАГРУЗКА ФОТО С ПОМОЩЬЮ GLIDE
+            String imageUrl = property.getImageUrl();
+            if (imageUrl != null && !imageUrl.isEmpty()) {
+                // Загружаем фото с сервера
+                Glide.with(itemView.getContext())
+                        .load(imageUrl)
+                        .placeholder(android.R.drawable.ic_menu_gallery)  // Заглушка при загрузке
+                        .error(android.R.drawable.ic_menu_report_image)    // Если ошибка
+                        .centerCrop()
+                        .into(ivPropertyImage);
+            } else {
+                // Если фото нет — показываем заглушку
+                ivPropertyImage.setImageResource(android.R.drawable.ic_menu_gallery);
+            }
 
             if ("RENT".equals(property.getType())) {
                 tvType.setBackgroundColor(0xFFFF9800);

@@ -1,13 +1,74 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+    <LinearLayout
+        android:id="@+id/panelTabs"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:padding="8dp"
+        android:gravity="center_vertical"
+        android:background="#F5F5F5"
+        android:elevation="2dp">
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnTabAll"
+            android:layout_width="0dp"
+            android:layout_height="40dp"
+            android:layout_weight="1"
+            android:text="Все"
+            android:textSize="11sp"
+            android:layout_marginEnd="4dp"
+            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+            app:strokeColor="#2196F3"
+            app:strokeWidth="2dp"
+            android:textColor="#2196F3"/>
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnTabSale"
+            android:layout_width="0dp"
+            android:layout_height="40dp"
+            android:layout_weight="1"
+            android:text="Продажа"
+            android:textSize="11sp"
+            android:layout_marginEnd="4dp"
+            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+            app:strokeColor="#757575"
+            app:strokeWidth="1dp"
+            android:textColor="#757575"/>
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnTabRent"
+            android:layout_width="0dp"
+            android:layout_height="40dp"
+            android:layout_weight="1"
+            android:text="Аренда"
+            android:textSize="11sp"
+            android:layout_marginEnd="8dp"
+            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+            app:strokeColor="#757575"
+            app:strokeWidth="1dp"
+            android:textColor="#757575"/>
+
+        <ImageButton
+            android:id="@+id/btnFilter"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:src="@android:drawable/ic_menu_sort_by_size"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="Фильтры"
+            app:tint="#2196F3"/>
+    </LinearLayout>
+
     <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
         android:id="@+id/swipeRefreshLayout"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:layout_marginTop="56dp">
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recyclerView"
@@ -17,18 +78,17 @@
             android:clipToPadding="false"/>
     </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
-    <!-- Заглушка при пустом списке -->
     <TextView
         android:id="@+id/tvEmpty"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
+        android:layout_marginTop="28dp"
         android:text="Объявлений пока нет"
         android:textSize="18sp"
         android:textColor="#757575"
         android:visibility="gone"/>
 
-    <!-- 🔥 FAB для добавления (НОВОЕ) -->
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fabAddProperty"
         android:layout_width="wrap_content"

@@ -34,6 +34,13 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        btnToggleView = findViewById(R.id.btnToggleView);
+
+        if (btnToggleView != null) {
+            btnToggleView.setOnClickListener(v -> {
+                toggleView();
+            });
+        }
 
         prefsManager = SharedPreferencesManager.getInstance(this);
 
@@ -59,17 +66,6 @@ public class MainActivity extends AppCompatActivity {
             Intent intent = new Intent(MainActivity.this, ProfileActivity.class);
             startActivity(intent);
         });
-
-        btnFilter.setOnClickListener(v -> {
-            FilterDialogFragment dialog = new FilterDialogFragment();
-            Fragment currentFragment = getSupportFragmentManager().findFragmentById(R.id.fragmentContainer);
-            if (currentFragment instanceof FilterDialogFragment.OnFilterApplyListener) {
-                dialog.setListener((FilterDialogFragment.OnFilterApplyListener) currentFragment);
-            }
-            dialog.show(getSupportFragmentManager(), "FilterDialog");
-        });
-
-        btnToggleView.setOnClickListener(v -> toggleView());
     }
 
     private void toggleView() {

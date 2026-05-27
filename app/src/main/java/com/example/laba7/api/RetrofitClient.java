@@ -4,9 +4,6 @@ import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
 public class RetrofitClient {
-
-    // Для эмулятора Android Studio используйте 10.0.2.2
-    // Для реального телефона — IP вашего компьютера (например, 192.168.1.100)
     public static final String BASE_URL = "http://192.168.0.15:8080/"; //10.251.169.98   192.168.0.15
 
     private static Retrofit retrofit = null;

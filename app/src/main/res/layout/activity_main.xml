@@ -69,18 +69,6 @@
                     android:textColor="#FFFFFF"
                     app:strokeColor="#FFFFFF"
                     app:cornerRadius="16dp"/>
-
-                <!-- Кнопка фильтра -->
-                <ImageButton
-                    android:id="@+id/btnFilter"
-                    android:layout_width="40dp"
-                    android:layout_height="40dp"
-                    android:layout_marginStart="4dp"
-                    android:src="@android:drawable/ic_menu_sort_by_size"
-                    android:background="?attr/selectableItemBackgroundBorderless"
-                    android:contentDescription="Фильтры"
-                    android:padding="8dp"
-                    android:tint="#FFFFFF"/>
             </LinearLayout>
         </com.google.android.material.appbar.MaterialToolbar>
     </com.google.android.material.appbar.AppBarLayout>

@@ -82,6 +82,7 @@
                 android:textSize="12sp"
                 android:text="Продажа" />
 
+        </LinearLayout>
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnRespond"
                 android:layout_width="match_parent"
@@ -89,7 +90,7 @@
                 android:text="Откликнуться"
                 android:textSize="14sp"
                 android:visibility="gone"
-                android:layout_marginTop="12dp"
+                android:layout_marginTop="4dp"
                 android:layout_marginBottom="4dp"
                 style="@style/Widget.MaterialComponents.Button.OutlinedButton"
                 app:strokeColor="#2196F3"
@@ -100,17 +101,15 @@
                 android:id="@+id/btnDelete"
                 android:layout_width="match_parent"
                 android:layout_height="40dp"
-                android:text="🗑️ Удалить объявление"
+                android:text="Удалить"
                 android:textSize="14sp"
                 android:visibility="gone"
-                android:layout_marginTop="8dp"
+                android:layout_marginTop="4dp"
                 android:layout_marginBottom="4dp"
                 style="@style/Widget.MaterialComponents.Button.OutlinedButton"
                 app:strokeColor="#F44336"
                 app:strokeWidth="1dp"
                 android:textColor="#F44336"/>
-        </LinearLayout>
-
     </LinearLayout>
 
 </androidx.cardview.widget.CardView>

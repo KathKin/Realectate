@@ -61,7 +61,7 @@ public class PropertyAdapter extends RecyclerView.Adapter<PropertyAdapter.ViewHo
 
     static class ViewHolder extends RecyclerView.ViewHolder {
         ImageView ivPropertyImage;
-        TextView tvTitle, tvCity, tvPrice, tvRooms, tvArea, tvType;
+        TextView tvPropertyId, tvTitle, tvCity, tvPrice, tvRooms, tvArea, tvType;
         MaterialButton btnRespond;
         MaterialButton btnDelete;
 
@@ -74,6 +74,7 @@ public class PropertyAdapter extends RecyclerView.Adapter<PropertyAdapter.ViewHo
             this.currentUserId = currentUserId;
 
             ivPropertyImage = itemView.findViewById(R.id.ivPropertyImage);
+            tvPropertyId = itemView.findViewById(R.id.tvPropertyId);
             tvTitle = itemView.findViewById(R.id.tvTitle);
             tvCity = itemView.findViewById(R.id.tvCity);
             tvPrice = itemView.findViewById(R.id.tvPrice);
@@ -85,12 +86,12 @@ public class PropertyAdapter extends RecyclerView.Adapter<PropertyAdapter.ViewHo
         }
 
         public void bind(Property property, OnItemClickListener listener) {
-            // Загрузка текста
+
             tvTitle.setText(property.getTitle());
             tvCity.setText(property.getCity() + ", " + property.getAddress());
 
             NumberFormat format = NumberFormat.getInstance(new Locale("ru", "KZ"));
-            tvPrice.setText(format.format(property.getPrice()) + " ₸");
+            tvPrice.setText(format.format(property.getPrice()) + " Рублей");
 
             tvRooms.setText("Комнат: " + property.getRooms());
             tvArea.setText("Площадь: " + property.getArea() + " м²");
@@ -149,6 +150,19 @@ public class PropertyAdapter extends RecyclerView.Adapter<PropertyAdapter.ViewHo
                     btnRespond.setVisibility(View.GONE);
                 }
             }
+
+            if (property.getId() != null && "AGENT".equals(currentUserRole)) {
+                tvPropertyId.setText("ID: " + property.getId());
+                tvPropertyId.setVisibility(View.VISIBLE);
+            } else {
+                tvPropertyId.setVisibility(View.GONE);
+            }
+
+            itemView.setOnClickListener(v -> {
+                if (listener != null) {
+                    listener.onItemClick(property);
+                }
+            });
 
             itemView.setOnClickListener(v -> {
                 if (listener != null) {

@@ -3,6 +3,7 @@ package com.example.laba7;
 import android.content.Intent;
 import android.os.Bundle;
 import android.widget.TextView;
+import android.view.View;
 import android.widget.Toast;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
@@ -12,7 +13,7 @@ import com.google.android.material.button.MaterialButton;
 public class ProfileActivity extends AppCompatActivity {
 
     private TextView tvName, tvEmail, tvRole;
-    private MaterialButton btnLogout;
+    private MaterialButton btnLogout, btnMyApplications;
     private SharedPreferencesManager prefs;
 
     @Override
@@ -32,20 +33,35 @@ public class ProfileActivity extends AppCompatActivity {
         tvEmail = findViewById(R.id.tvProfileEmail);
         tvRole = findViewById(R.id.tvProfileRole);
         btnLogout = findViewById(R.id.btnLogoutProfile);
+        btnMyApplications = findViewById(R.id.btnMyApplications);
     }
 
     private void loadData() {
         tvName.setText(prefs.getUserName());
         tvEmail.setText(prefs.getUserEmail());
 
-        // ✅ ИСПРАВЛЕНО: отображаем реальную роль
         String role = prefs.getUserRole();
         String displayRole = "AGENT".equals(role) ? "Риэлтор" : "Клиент";
         tvRole.setText(displayRole);
+
+        if ("CLIENT".equals(role)) {
+            btnMyApplications.setVisibility(View.VISIBLE);
+        } else {
+            btnMyApplications.setVisibility(View.GONE);
+        }
     }
 
     private void setupListeners() {
         btnLogout.setOnClickListener(v -> confirmLogout());
+
+        btnMyApplications.setOnClickListener(v -> {
+            Long userId = prefs.getUserId();
+            if (userId != null) {
+                Intent intent = new Intent(ProfileActivity.this, MyApplicationsActivity.class);
+                intent.putExtra("client_id", userId);
+                startActivity(intent);
+            }
+        });
     }
 
     private void confirmLogout() {

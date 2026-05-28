@@ -27,10 +27,13 @@ public class Application {
     @SerializedName("createdAt")
     private String createdAt;
 
-    // Пустой конструктор (обязателен для Retrofit/Gson)
+    @SerializedName("property")
+    private Property property;
+
+    @SerializedName("note")
+    private String note;
     public Application() {}
 
-    // Конструктор для отправки заявки
     public Application(Long propertyId, Long clientId, Long agentId,
                        String clientName, String clientPhone, String message) {
         this.propertyId = propertyId;
@@ -42,7 +45,6 @@ public class Application {
         this.status = "NEW";
     }
 
-    // ===== Геттеры =====
     public Long getId() { return id; }
     public Long getPropertyId() { return propertyId; }
     public Long getClientId() { return clientId; }
@@ -52,8 +54,9 @@ public class Application {
     public String getMessage() { return message; }
     public String getStatus() { return status; }
     public String getCreatedAt() { return createdAt; }
+    public Property getProperty() { return property; }
+    public String getNote() { return note; }
 
-    // ===== Сеттеры =====
     public void setId(Long id) { this.id = id; }
     public void setPropertyId(Long propertyId) { this.propertyId = propertyId; }
     public void setClientId(Long clientId) { this.clientId = clientId; }
@@ -63,8 +66,9 @@ public class Application {
     public void setMessage(String message) { this.message = message; }
     public void setStatus(String status) { this.status = status; }
     public void setCreatedAt(String createdAt) { this.createdAt = createdAt; }
+    public void setProperty(Property property) { this.property = property; }
+    public void setNote(String note) { this.note = note; }
 
-    // Для отладки
     @Override
     public String toString() {
         return "Application{" +

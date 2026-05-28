@@ -70,12 +70,10 @@ public class MainActivity extends AppCompatActivity {
 
     private void toggleView() {
         if (!isShowingApplications) {
-            // 🔥 Сейчас мы на Объявлениях → переключаем на Заявки
             btnToggleView.setText("🏠 Объявления");
             loadFragment(new ApplicationsFragment());
             isShowingApplications = true;
         } else {
-            // 🔥 Сейчас мы на Заявках → переключаем обратно на Объявления
             btnToggleView.setText("📥 Заявки");
             loadFragment(new PropertyListFragment());
             isShowingApplications = false;
@@ -87,10 +85,9 @@ public class MainActivity extends AppCompatActivity {
 
         if ("AGENT".equals(role)) {
             btnToggleView.setVisibility(View.VISIBLE);
-            // 🔥 По умолчанию кнопка ведет на Заявки, а экран показывает Объявления
             btnToggleView.setText("📥 Заявки");
             isShowingApplications = false;
-            loadFragment(new PropertyListFragment()); // Сразу грузим список недвижимости
+            loadFragment(new PropertyListFragment());
         } else {
             btnToggleView.setVisibility(View.GONE);
             loadFragment(new PropertyListFragment());
@@ -127,22 +124,18 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    // 🔥 НОВЫЙ ПУБЛИЧНЫЙ МЕТОД: Диалог отправки отклика
     public void showRespondDialog(Property property) {
-        // 1. Получаем ID текущего пользователя
         Long clientId = prefsManager.getUserId();
         if (clientId == null || clientId <= 0) {
-            Toast.makeText(this, "⚠️ Ошибка авторизации. Войдите заново.", Toast.LENGTH_LONG).show();
+            Toast.makeText(this, "Ошибка авторизации. Войдите заново.", Toast.LENGTH_LONG).show();
             return;
         }
 
-        // Проверяем, что у объявления есть ID
         if (property.getId() == null) {
-            Toast.makeText(this, "⚠️ Ошибка: ID объявления не найден", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Ошибка: ID объявления не найден", Toast.LENGTH_SHORT).show();
             return;
         }
 
-        // 2. Создаём поле ввода сообщения
         final EditText inputMessage = new EditText(this);
         inputMessage.setHint("Сообщение агенту (необязательно)");
         inputMessage.setPadding(40, 30, 40, 30);
@@ -151,30 +144,26 @@ public class MainActivity extends AppCompatActivity {
         new AlertDialog.Builder(this)
                 .setTitle("Отклик на объявление")
                 .setMessage("Отправить заявку на:\n\"" + property.getTitle() + "\"?")
-                .setView(inputMessage) // Добавляем поле ввода в диалог
+                .setView(inputMessage)
                 .setPositiveButton("Отправить", (dialog, which) -> {
                     String messageText = inputMessage.getText().toString().trim();
                     if (messageText.isEmpty()) {
                         messageText = "Здравствуйте, интересует ваше объявление. Готов обсудить детали.";
                     }
 
-                    // 3. Формируем объект заявки
                     Application application = new Application();
                     application.setPropertyId(property.getId());
                     application.setClientId(clientId);
                     application.setClientName(prefsManager.getUserName());
-                    // Пока используем email как контакт (в реальном проекте добавьте поле телефона в профиль)
                     application.setClientPhone(prefsManager.getUserEmail());
                     application.setMessage(messageText);
 
-                    // 4. Отправляем на сервер
                     sendApplication(application);
                 })
                 .setNegativeButton("Отмена", null)
                 .show();
     }
 
-    //  НОВЫЙ МЕТОД: Реальная отправка запроса к API
     private void sendApplication(Application app) {
         Toast.makeText(this, " Отправка заявки...", Toast.LENGTH_SHORT).show();
 
@@ -183,11 +172,11 @@ public class MainActivity extends AppCompatActivity {
             public void onResponse(Call<Application> call, Response<Application> response) {
                 if (response.isSuccessful() && response.body() != null) {
                     Toast.makeText(MainActivity.this,
-                            "✅ Заявка успешно отправлена!\nАгент свяжется с вами.",
+                            "Заявка успешно отправлена!\nАгент свяжется с вами.",
                             Toast.LENGTH_LONG).show();
                 } else {
                     Toast.makeText(MainActivity.this,
-                            "❌ Ошибка сервера: " + response.code() + " " + response.message(),
+                            "Ошибка сервера: " + response.code() + " " + response.message(),
                             Toast.LENGTH_LONG).show();
                 }
             }
@@ -195,7 +184,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onFailure(Call<Application> call, Throwable t) {
                 Toast.makeText(MainActivity.this,
-                        "❌ Ошибка сети: " + t.getMessage(),
+                        "Ошибка сети: " + t.getMessage(),
                         Toast.LENGTH_LONG).show();
             }
         });

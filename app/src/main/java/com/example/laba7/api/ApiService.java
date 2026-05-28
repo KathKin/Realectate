@@ -17,40 +17,35 @@ import retrofit2.http.DELETE;
 import retrofit2.http.Path;
 
 public interface ApiService {
-
-    // ============= Auth =============
     @POST("api/users/register")
     Call<AuthResponse> register(@Body UserRegisterRequest request);
-
     @POST("api/users/login")
     Call<AuthResponse> login(@Body UserLoginRequest request);
-
-    // ============= Properties =============
     @GET("api/properties")
     Call<List<Property>> getAllProperties();
-
     @GET("api/properties/{id}")
     Call<Property> getPropertyById(@Path("id") Long id);
 
     @GET("api/users/check-realtor")
     Call<Map<String, Object>> checkRealtorStatus(@Query("email") String email);
-
     @POST("api/applications")
     Call<Application> submitApplication(@Body Application application);
-
-    // Риэлтор получает список заявок на свои объявления
     @GET("api/applications/agent/{agentId}")
     Call<List<Application>> getAgentApplications(@Path("agentId") Long agentId);
 
     @Multipart
     @POST("api/files/upload")
     Call<ResponseBody> uploadFile(@Part MultipartBody.Part file);
-
-    // Создание нового объявления
     @POST("api/properties")
     Call<com.example.laba7.model.Property> createProperty(@Body com.example.laba7.model.Property property);
     @DELETE("api/properties/{id}")
     Call<ResponseBody> deleteProperty(@Path("id") Long id);
+    @GET("/api/applications/client/{clientId}")
+    Call<List<Application>> getApplicationsByClientId(@Path("clientId") Long clientId);
+    @PUT("/api/applications/{id}/note")
+    Call<Application> updateApplicationNote(@Path("id") Long id, @Body Map<String, String> noteBody);
+    @DELETE("/api/applications/{id}")
+    Call<Void> deleteApplication(@Path("id") Long id);
     class UserRegisterRequest {
         private String email;
         private String password;

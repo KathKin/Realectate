@@ -18,7 +18,6 @@
         android:theme="@style/Theme.Laba7"
         android:usesCleartextTraffic="true">
 
-        <!-- LoginActivity - точка входа -->
         <activity
             android:name=".LoginActivity"
             android:exported="true">
@@ -28,12 +27,10 @@
             </intent-filter>
         </activity>
 
-        <!-- MainActivity -->
         <activity
             android:name=".MainActivity"
             android:exported="false" />
 
-        <!-- RegisterActivity -->
         <activity
             android:name=".RegisterActivity"
             android:exported="false"
@@ -42,6 +39,10 @@
         <activity
             android:name=".ProfileActivity"
             android:exported="false" />
+
+        <activity
+            android:name=".MyApplicationsActivity"
+            android:parentActivityName=".ProfileActivity" />
 
     </application>
 </manifest>

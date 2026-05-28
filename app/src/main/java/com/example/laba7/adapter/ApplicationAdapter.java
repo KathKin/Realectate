@@ -49,7 +49,7 @@ public class ApplicationAdapter extends RecyclerView.Adapter<ApplicationAdapter.
     }
 
     static class ViewHolder extends RecyclerView.ViewHolder {
-        TextView tvClientName, tvClientPhone, tvPropertyId, tvMessage, tvStatus, tvDate;
+        TextView tvClientName, tvClientPhone, tvPropertyId, tvMessage, tvDate;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -57,7 +57,6 @@ public class ApplicationAdapter extends RecyclerView.Adapter<ApplicationAdapter.
             tvClientPhone = itemView.findViewById(R.id.tvClientPhone);
             tvPropertyId = itemView.findViewById(R.id.tvPropertyId);
             tvMessage = itemView.findViewById(R.id.tvMessage);
-            tvStatus = itemView.findViewById(R.id.tvStatus);
             tvDate = itemView.findViewById(R.id.tvDate);
         }
 
@@ -67,10 +66,8 @@ public class ApplicationAdapter extends RecyclerView.Adapter<ApplicationAdapter.
             tvPropertyId.setText("Объявление #" + app.getPropertyId());
             tvMessage.setText(app.getMessage() != null ? app.getMessage() : "Без сообщения");
 
-            // Форматирование даты
             if (app.getCreatedAt() != null) {
                 try {
-                    // Парсим ISO формат от сервера
                     java.time.LocalDateTime ldt = java.time.LocalDateTime.parse(app.getCreatedAt().replace("Z", ""));
                     tvDate.setText(dateFormat.format(java.util.Date.from(ldt.atZone(java.time.ZoneId.systemDefault()).toInstant())));
                 } catch (Exception e) {
@@ -78,22 +75,6 @@ public class ApplicationAdapter extends RecyclerView.Adapter<ApplicationAdapter.
                 }
             }
 
-            // Цвет статуса
-            String status = app.getStatus() != null ? app.getStatus().toUpperCase() : "NEW";
-            tvStatus.setText(status);
-            switch (status) {
-                case "NEW":
-                    tvStatus.setBackgroundColor(0xFFFF9800); // Оранжевый
-                    break;
-                case "VIEWED":
-                    tvStatus.setBackgroundColor(0xFF2196F3); // Синий
-                    break;
-                case "CONTACTED":
-                    tvStatus.setBackgroundColor(0xFF4CAF50); // Зелёный
-                    break;
-                default:
-                    tvStatus.setBackgroundColor(0xFF9E9E9E); // Серый
-            }
         }
     }
 }

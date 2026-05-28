@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fillViewport="true"
@@ -29,12 +30,15 @@
             android:textColor="#757575"
             android:layout_marginBottom="24dp"/>
 
-        <!-- Полное имя -->
+        <!-- 🔧 Полное имя (Исправлено) -->
         <com.google.android.material.textfield.TextInputLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="12dp"
-            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+            style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
+            app:hintTextColor="#424242"
+            app:boxStrokeColor="#2196F3"
+            app:boxStrokeWidth="2dp">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/etFullName"
@@ -43,15 +47,18 @@
                 android:hint="ФИО"
                 android:maxLines="1"
                 android:textColor="#000000"
-                android:textColorHint="#757575"/>
+                android:textColorHint="#424242"/>
         </com.google.android.material.textfield.TextInputLayout>
 
-        <!-- Email -->
+        <!-- 🔧 Email (Исправлено) -->
         <com.google.android.material.textfield.TextInputLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="12dp"
-            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+            style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
+            app:hintTextColor="#424242"
+            app:boxStrokeColor="#2196F3"
+            app:boxStrokeWidth="2dp">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/etEmail"
@@ -61,15 +68,18 @@
                 android:inputType="textEmailAddress"
                 android:maxLines="1"
                 android:textColor="#000000"
-                android:textColorHint="#757575"/>
+                android:textColorHint="#424242"/>
         </com.google.android.material.textfield.TextInputLayout>
 
-        <!-- Телефон -->
+        <!-- 🔧 Телефон (Исправлено) -->
         <com.google.android.material.textfield.TextInputLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="12dp"
-            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+            style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
+            app:hintTextColor="#424242"
+            app:boxStrokeColor="#2196F3"
+            app:boxStrokeWidth="2dp">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/etPhone"
@@ -79,15 +89,19 @@
                 android:inputType="phone"
                 android:maxLines="1"
                 android:textColor="#000000"
-                android:textColorHint="#757575"/>
+                android:textColorHint="#424242"/>
         </com.google.android.material.textfield.TextInputLayout>
 
-        <!-- Пароль -->
+        <!-- 🔧 Пароль (Исправлено) -->
         <com.google.android.material.textfield.TextInputLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="12dp"
-            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+            style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
+            app:hintTextColor="#424242"
+            app:boxStrokeColor="#2196F3"
+            app:boxStrokeWidth="2dp"
+            app:passwordToggleEnabled="true">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/etPassword"
@@ -97,15 +111,19 @@
                 android:inputType="textPassword"
                 android:maxLines="1"
                 android:textColor="#000000"
-                android:textColorHint="#757575"/>
+                android:textColorHint="#424242"/>
         </com.google.android.material.textfield.TextInputLayout>
 
-        <!-- Подтверждение пароля -->
+        <!-- 🔧 Подтверждение пароля (Исправлено) -->
         <com.google.android.material.textfield.TextInputLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="24dp"
-            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+            style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
+            app:hintTextColor="#424242"
+            app:boxStrokeColor="#2196F3"
+            app:boxStrokeWidth="2dp"
+            app:passwordToggleEnabled="true">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/etConfirmPassword"
@@ -115,10 +133,10 @@
                 android:inputType="textPassword"
                 android:maxLines="1"
                 android:textColor="#000000"
-                android:textColorHint="#757575"/>
+                android:textColorHint="#424242"/>
         </com.google.android.material.textfield.TextInputLayout>
 
-        <!-- Кнопка Регистрация -->
+        <!-- 🔧 Кнопка Регистрация -->
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btnRegister"
             android:layout_width="match_parent"
@@ -126,6 +144,7 @@
             android:text="Зарегистрироваться"
             android:textSize="16sp"
             android:textColor="#FFFFFF"
+            app:backgroundTint="#6200EE"
             android:layout_marginBottom="16dp"/>
 
         <!-- Ссылка на вход -->

@@ -40,6 +40,8 @@ import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
+import android.widget.RadioGroup;
+import android.widget.RadioButton;
 
 public class PropertyListFragment extends Fragment {
 
@@ -356,6 +358,7 @@ public class PropertyListFragment extends Fragment {
         View dialogView = getLayoutInflater().inflate(R.layout.dialog_add_property, null);
         builder.setView(dialogView);
 
+        // === Поля ввода ===
         TextInputEditText etTitle = dialogView.findViewById(R.id.etTitle);
         TextInputEditText etAddress = dialogView.findViewById(R.id.etAddress);
         TextInputEditText etCity = dialogView.findViewById(R.id.etCity);
@@ -364,16 +367,24 @@ public class PropertyListFragment extends Fragment {
         TextInputEditText etArea = dialogView.findViewById(R.id.etArea);
         ImageView ivPreview = dialogView.findViewById(R.id.ivPreview);
 
+        // === 🔧 Выбор типа сделки (Продажа / Аренда) ===
+        RadioGroup rgPropertyType = dialogView.findViewById(R.id.rgPropertyType);
+        RadioButton rbSale = dialogView.findViewById(R.id.rbSale);
+        RadioButton rbRent = dialogView.findViewById(R.id.rbRent);
+
+        // === Выбор фото из галереи ===
         ivPreview.setOnClickListener(v -> {
             Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
             intent.setType("image/*");
             imagePickerLauncher.launch(intent);
         });
 
+        // === Показ превью, если фото уже выбрано ===
         if (selectedImageUri != null) {
             Glide.with(requireContext()).load(selectedImageUri).centerCrop().into(ivPreview);
         }
 
+        // === Обработка кнопки "Создать" ===
         builder.setPositiveButton("Создать", (dialog, which) -> {
             String title = etTitle.getText().toString().trim();
             String address = etAddress.getText().toString().trim();
@@ -382,11 +393,13 @@ public class PropertyListFragment extends Fragment {
             String roomsStr = etRooms.getText().toString().trim();
             String areaStr = etArea.getText().toString().trim();
 
+            // Валидация обязательных полей
             if (title.isEmpty() || priceStr.isEmpty()) {
                 Toast.makeText(getContext(), "Заполните обязательные поля", Toast.LENGTH_SHORT).show();
                 return;
             }
 
+            // Создание объекта Property
             Property newProperty = new Property();
             newProperty.setTitle(title);
             newProperty.setAddress(address);
@@ -394,15 +407,24 @@ public class PropertyListFragment extends Fragment {
             newProperty.setPrice(Double.parseDouble(priceStr));
             newProperty.setRooms(roomsStr.isEmpty() ? 1 : Integer.parseInt(roomsStr));
             newProperty.setArea(areaStr.isEmpty() ? 0.0 : Double.parseDouble(areaStr));
-            newProperty.setType("SALE");
+
+            // 🔧 Определяем тип сделки по выбранному RadioButton
+            String propertyType = (rgPropertyType.getCheckedRadioButtonId() == rbSale.getId())
+                    ? "SALE"
+                    : "RENT";
+            newProperty.setType(propertyType);
+
+            // Привязка к текущему агенту
             newProperty.setAgentId(currentUserId);
 
+            // Отправка: с фото или без
             if (selectedImageUri != null) {
                 uploadImageAndCreateProperty(newProperty);
             } else {
                 createProperty(newProperty, null);
             }
         });
+
         builder.setNegativeButton("Отмена", null);
         builder.show();
     }

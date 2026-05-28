@@ -21,8 +21,6 @@ public class LoginActivity extends AppCompatActivity {
     private TextInputEditText etEmail, etPassword;
     private MaterialButton btnLogin;
     private TextView tvRegister;
-    private MaterialButton btnCheckRealtor;
-    private TextView tvRealtorStatus;
     private boolean isCheckingRealtor = false;
     private SharedPreferencesManager prefsManager;
 
@@ -46,68 +44,12 @@ public class LoginActivity extends AppCompatActivity {
         etPassword = findViewById(R.id.etPassword);
         btnLogin = findViewById(R.id.btnLogin);
         tvRegister = findViewById(R.id.tvRegister);
-        btnCheckRealtor = findViewById(R.id.btnCheckRealtor);
-        tvRealtorStatus = findViewById(R.id.tvRealtorStatus);
     }
 
     private void setupListeners() {
         btnLogin.setOnClickListener(v -> performLogin());
         tvRegister.setOnClickListener(v ->
                 startActivity(new Intent(LoginActivity.this, RegisterActivity.class))
-        );
-
-        etEmail.addTextChangedListener(new TextWatcher() {
-            @Override public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
-            @Override public void onTextChanged(CharSequence s, int start, int before, int count) {
-                btnCheckRealtor.setEnabled(android.util.Patterns.EMAIL_ADDRESS.matcher(s).matches());
-            }
-            @Override public void afterTextChanged(Editable s) {}
-        });
-
-        btnCheckRealtor.setOnClickListener(v -> checkRealtorStatus());
-    }
-
-    private void checkRealtorStatus() {
-        String email = etEmail.getText().toString().trim();
-        if (isCheckingRealtor) return;
-
-        isCheckingRealtor = true;
-        btnCheckRealtor.setEnabled(false);
-        btnCheckRealtor.setText("Проверка...");
-        tvRealtorStatus.setText("");
-
-        RetrofitClient.getApiService().checkRealtorStatus(email).enqueue(
-                new Callback<Map<String, Object>>() {
-                    @Override
-                    public void onResponse(Call<Map<String, Object>> call, Response<Map<String, Object>> response) {
-                        isCheckingRealtor = false;
-                        btnCheckRealtor.setEnabled(true);
-                        btnCheckRealtor.setText("Проверить статус");
-
-                        if (response.isSuccessful() && response.body() != null) {
-                            Boolean isRealtor = (Boolean) response.body().get("isRealtor");
-                            String role = (String) response.body().get("role");
-                            if (isRealtor != null && isRealtor) {
-                                tvRealtorStatus.setText("✅ Подтверждён: " + role);
-                                tvRealtorStatus.setTextColor(0xFF2E7D32);
-                            } else {
-                                tvRealtorStatus.setText("❌ Статус: " + (role != null ? role : "Клиент"));
-                                tvRealtorStatus.setTextColor(0xFFC62828);
-                            }
-                        } else {
-                            tvRealtorStatus.setText("⚠️ Пользователь не найден");
-                            tvRealtorStatus.setTextColor(0xFFE65100);
-                        }
-                    }
-                    @Override
-                    public void onFailure(Call<Map<String, Object>> call, Throwable t) {
-                        isCheckingRealtor = false;
-                        btnCheckRealtor.setEnabled(true);
-                        btnCheckRealtor.setText("Проверить статус");
-                        tvRealtorStatus.setText("⚠️ Ошибка сети");
-                        tvRealtorStatus.setTextColor(0xFFC62828);
-                    }
-                }
         );
     }
 
@@ -139,7 +81,6 @@ public class LoginActivity extends AppCompatActivity {
                                 ? authResponse.getUser().getRole()
                                 : "CLIENT";
 
-                        // ✅ ВАЖНО: передаём ID пользователя
                         prefsManager.saveLoginData(
                                 authResponse.getUser().getEmail(),
                                 authResponse.getUser().getFullName(),

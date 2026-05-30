@@ -37,7 +37,7 @@ public class RegisterActivity extends AppCompatActivity {
         btnRegister.setOnClickListener(v -> performRegister());
 
         tvLogin.setOnClickListener(v -> {
-            finish(); // Вернуться к LoginActivity
+            finish();
         });
     }
 
@@ -48,7 +48,6 @@ public class RegisterActivity extends AppCompatActivity {
         String password = etPassword.getText().toString().trim();
         String confirmPassword = etConfirmPassword.getText().toString().trim();
 
-        // Валидация
         if (fullName.isEmpty() || email.isEmpty() || phone.isEmpty() ||
                 password.isEmpty() || confirmPassword.isEmpty()) {
             Toast.makeText(this, "Заполните все поля", Toast.LENGTH_SHORT).show();
@@ -82,7 +81,7 @@ public class RegisterActivity extends AppCompatActivity {
                 if (response.isSuccessful() && response.body() != null) {
                     Toast.makeText(RegisterActivity.this,
                             "Регистрация успешна!", Toast.LENGTH_SHORT).show();
-                    finish(); // Вернуться к экрану входа
+                    finish();
                 } else {
                     Toast.makeText(RegisterActivity.this,
                             "Ошибка регистрации: " + response.message(),

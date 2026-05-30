@@ -77,17 +77,28 @@ public class MyApplicationAdapter extends RecyclerView.Adapter<MyApplicationAdap
         }
 
         public void bind(Application app) {
+            if (btnSaveNote != null) btnSaveNote.setOnClickListener(null);
+            if (btnDelete != null) btnDelete.setOnClickListener(null);
+
             if (app.getProperty() != null) {
                 tvTitle.setText(app.getProperty().getTitle());
-                String price = String.format("%,d ₽", app.getProperty().getPrice().longValue());
-                tvPrice.setText(price);
-                tvLocation.setText(app.getProperty().getCity() + ", " + app.getProperty().getAddress());
+
+                if (app.getProperty().getPrice() != null) {
+                    String price = String.format("%,d ₽", app.getProperty().getPrice().longValue());
+                    tvPrice.setText(price);
+                } else {
+                    tvPrice.setText("");
+                }
+
+                String city = app.getProperty().getCity() != null ? app.getProperty().getCity() : "";
+                String address = app.getProperty().getAddress() != null ? app.getProperty().getAddress() : "";
+                tvLocation.setText(city + ", " + address);
 
                 String type = "SALE".equals(app.getProperty().getType()) ? "Продажа" : "Аренда";
                 tvType.setText(type);
                 tvType.setBackgroundColor("SALE".equals(app.getProperty().getType()) ? 0xFF4CAF50 : 0xFFFF9800);
+                tvType.setVisibility(View.VISIBLE);
 
-                // 🔧 Загрузка фото
                 String imageUrl = app.getProperty().getImageUrl();
                 if (imageUrl != null && !imageUrl.isEmpty()) {
                     Glide.with(itemView.getContext())
@@ -108,16 +119,25 @@ public class MyApplicationAdapter extends RecyclerView.Adapter<MyApplicationAdap
                 ivPropertyImage.setImageResource(android.R.drawable.ic_menu_gallery);
             }
 
-            etNote.setText(app.getNote() != null ? app.getNote() : "");
+            if (etNote != null) {
+                etNote.setText(app.getClientNote() != null ? app.getClientNote() : "");
+                etNote.setSelection(etNote.getText().length());
+            }
 
-            btnSaveNote.setOnClickListener(v -> {
-                String note = etNote.getText().toString().trim();
-                if (noteListener != null) noteListener.onNoteSaved(app, note);
-            });
+            if (btnSaveNote != null && noteListener != null) {
+                btnSaveNote.setOnClickListener(v -> {
+                    if (etNote != null) {
+                        String note = etNote.getText().toString().trim();
+                        noteListener.onNoteSaved(app, note);
+                    }
+                });
+            }
 
-            btnDelete.setOnClickListener(v -> {
-                if (deleteListener != null) deleteListener.onDelete(app);
-            });
+            if (btnDelete != null && deleteListener != null) {
+                btnDelete.setOnClickListener(v -> {
+                    deleteListener.onDelete(app);
+                });
+            }
         }
     }
 }

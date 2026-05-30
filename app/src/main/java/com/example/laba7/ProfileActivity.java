@@ -46,6 +46,7 @@ public class ProfileActivity extends AppCompatActivity {
 
         if ("CLIENT".equals(role)) {
             btnMyApplications.setVisibility(View.VISIBLE);
+            btnMyApplications.setText("📋 Мои отклики");
         } else {
             btnMyApplications.setVisibility(View.GONE);
         }
@@ -56,7 +57,18 @@ public class ProfileActivity extends AppCompatActivity {
 
         btnMyApplications.setOnClickListener(v -> {
             Long userId = prefs.getUserId();
-            if (userId != null) {
+            if (userId == null) {
+                Toast.makeText(this, "Ошибка авторизации", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            String role = prefs.getUserRole();
+
+            if ("AGENT".equals(role)) {
+                Intent intent = new Intent(ProfileActivity.this, AgentApplicationsActivity.class);
+                intent.putExtra("agent_id", userId);
+                startActivity(intent);
+            } else {
                 Intent intent = new Intent(ProfileActivity.this, MyApplicationsActivity.class);
                 intent.putExtra("client_id", userId);
                 startActivity(intent);

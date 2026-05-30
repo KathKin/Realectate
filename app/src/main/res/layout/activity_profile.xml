@@ -12,7 +12,6 @@
         android:padding="24dp"
         android:gravity="center_horizontal">
 
-        <!-- Аватар (заглушка) -->
         <ImageView
             android:layout_width="100dp"
             android:layout_height="100dp"
@@ -22,7 +21,6 @@
             android:background="@android:drawable/edit_text"
             android:padding="20dp"/>
 
-        <!-- ФИО -->
         <TextView
             android:id="@+id/tvProfileName"
             android:layout_width="wrap_content"
@@ -33,7 +31,6 @@
             android:textColor="#333333"
             android:layout_marginBottom="8dp"/>
 
-        <!-- Email -->
         <TextView
             android:id="@+id/tvProfileEmail"
             android:layout_width="wrap_content"
@@ -43,7 +40,6 @@
             android:textColor="#757575"
             android:layout_marginBottom="40dp"/>
 
-        <!-- Блок с информацией -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

@@ -44,5 +44,7 @@
             android:name=".MyApplicationsActivity"
             android:parentActivityName=".ProfileActivity" />
 
+        <activity android:name=".AgentApplicationsActivity" />
+        <activity android:name=".AgentPropertiesActivity" />
     </application>
 </manifest>

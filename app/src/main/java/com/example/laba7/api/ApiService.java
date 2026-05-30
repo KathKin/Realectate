@@ -12,9 +12,9 @@ import okhttp3.ResponseBody;
 import retrofit2.http.Multipart;
 import retrofit2.http.POST;
 import retrofit2.http.Part;
-import okhttp3.ResponseBody;
 import retrofit2.http.DELETE;
 import retrofit2.http.Path;
+import com.example.laba7.dto.PropertyWithApplicationsDto;
 
 public interface ApiService {
     @POST("api/users/register")
@@ -42,10 +42,20 @@ public interface ApiService {
     Call<ResponseBody> deleteProperty(@Path("id") Long id);
     @GET("/api/applications/client/{clientId}")
     Call<List<Application>> getApplicationsByClientId(@Path("clientId") Long clientId);
-    @PUT("/api/applications/{id}/note")
-    Call<Application> updateApplicationNote(@Path("id") Long id, @Body Map<String, String> noteBody);
     @DELETE("/api/applications/{id}")
     Call<Void> deleteApplication(@Path("id") Long id);
+    @GET("/api/applications/agent/{agentId}/properties-with-apps")
+    Call<List<PropertyWithApplicationsDto>> getPropertiesWithApplications(@Path("agentId") Long agentId);
+    @GET("/api/applications/property/{propertyId}")
+    Call<List<Application>> getApplicationsByPropertyId(@Path("propertyId") Long propertyId);
+    @GET("/api/applications/agent/{agentId}")
+    Call<List<Application>> getApplicationsByAgentId(@Path("agentId") Long agentId);
+    @PUT("/api/applications/{id}/note/client")
+    Call<Application> updateClientNote(@Path("id") Long id, @Body Map<String, String> noteBody);
+    @PUT("/api/applications/{id}/note/agent")
+    Call<Application> updateAgentNote(@Path("id") Long id, @Body Map<String, String> noteBody);
+
+
     class UserRegisterRequest {
         private String email;
         private String password;

@@ -27,7 +27,6 @@
                 android:paddingStart="16dp"
                 android:paddingEnd="8dp">
 
-                <!-- Приветствие -->
                 <LinearLayout
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
@@ -56,12 +55,11 @@
                         android:padding="4dp"/>
                 </LinearLayout>
 
-                <!-- 🔥 Кнопка переключения (только для риэлтора) -->
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/btnToggleView"
                     android:layout_width="wrap_content"
                     android:layout_height="32dp"
-                    android:text="🏠 Объявления"
+                    android:text="Объявления"
                     android:textSize="12sp"
                     android:visibility="gone"
                     android:layout_marginStart="8dp"
@@ -73,7 +71,6 @@
         </com.google.android.material.appbar.MaterialToolbar>
     </com.google.android.material.appbar.AppBarLayout>
 
-    <!--  Контейнер для фрагментов -->
     <FrameLayout
         android:id="@+id/fragmentContainer"
         android:layout_width="match_parent"

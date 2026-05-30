@@ -23,10 +23,8 @@ public class Property {
     @SerializedName("createdAt")
     private String createdAt;
 
-    // Пустой конструктор для Retrofit/Gson
     public Property() {}
 
-    // Конструктор с параметрами
     public Property(String title, String description, String city, String address,
                     BigDecimal price, Integer rooms, Double area, String type) {
         this.title = title;
@@ -39,7 +37,6 @@ public class Property {
         this.type = type;
     }
 
-    // ===== Геттеры =====
     public Long getId() { return id; }
     public String getTitle() { return title; }
     public String getDescription() { return description; }
@@ -54,7 +51,6 @@ public class Property {
     public String getCreatedAt() { return createdAt; }
     public Long getAgentId() { return agentId; }
 
-    // ===== Сеттеры =====
     public void setId(Long id) { this.id = id; }
     public void setTitle(String title) { this.title = title; }
     public void setDescription(String description) { this.description = description; }

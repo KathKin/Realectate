@@ -108,7 +108,7 @@
                     android:id="@+id/btnSaveNote"
                     android:layout_width="wrap_content"
                     android:layout_height="40dp"
-                    android:text="💾 Сохранить"
+                    android:text="Сохранить"
                     android:textSize="12sp"
                     app:cornerRadius="20dp"
                     android:layout_marginEnd="8dp"/>
@@ -117,7 +117,7 @@
                     android:id="@+id/btnDelete"
                     android:layout_width="wrap_content"
                     android:layout_height="40dp"
-                    android:text="🗑️ Удалить"
+                    android:text="Удалить"
                     android:textSize="12sp"
                     app:cornerRadius="20dp"
                     android:backgroundTint="#F44336"/>

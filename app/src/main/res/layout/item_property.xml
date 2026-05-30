@@ -40,7 +40,6 @@
             android:textStyle="bold"
             android:textColor="@android:color/black" />
 
-        <!-- Город -->
         <TextView
             android:id="@+id/tvCity"
             android:layout_width="match_parent"
@@ -49,7 +48,6 @@
             android:textColor="@android:color/darker_gray"
             android:layout_marginTop="4dp" />
 
-        <!-- Цена -->
         <TextView
             android:id="@+id/tvPrice"
             android:layout_width="match_parent"
@@ -59,7 +57,6 @@
             android:textStyle="bold"
             android:layout_marginTop="8dp" />
 
-        <!-- Комнаты и площадь -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

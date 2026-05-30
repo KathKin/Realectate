@@ -7,7 +7,7 @@ import androidx.viewpager2.adapter.FragmentStateAdapter;
 
 public class ViewPagerAdapter extends FragmentStateAdapter {
 
-    private final String[] tabTypes = {"ALL", "SALE", "RENT"}; // Можно добавить "DAILY"
+    private final String[] tabTypes = {"ALL", "SALE", "RENT"};
 
     public ViewPagerAdapter(@NonNull FragmentActivity fragmentActivity) {
         super(fragmentActivity);

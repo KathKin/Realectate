@@ -30,8 +30,11 @@ public class Application {
     @SerializedName("property")
     private Property property;
 
-    @SerializedName("note")
-    private String note;
+    @SerializedName("clientNote")
+    private String clientNote;
+
+    @SerializedName("agentNote")
+    private String agentNote;
     public Application() {}
 
     public Application(Long propertyId, Long clientId, Long agentId,
@@ -55,7 +58,8 @@ public class Application {
     public String getStatus() { return status; }
     public String getCreatedAt() { return createdAt; }
     public Property getProperty() { return property; }
-    public String getNote() { return note; }
+    public String getClientNote() { return clientNote; }
+    public String getAgentNote() { return agentNote; }
 
     public void setId(Long id) { this.id = id; }
     public void setPropertyId(Long propertyId) { this.propertyId = propertyId; }
@@ -67,7 +71,8 @@ public class Application {
     public void setStatus(String status) { this.status = status; }
     public void setCreatedAt(String createdAt) { this.createdAt = createdAt; }
     public void setProperty(Property property) { this.property = property; }
-    public void setNote(String note) { this.note = note; }
+    public void setClientNote(String clientNote) { this.clientNote = clientNote; }
+    public void setAgentNote(String agentNote) { this.agentNote = agentNote; }
 
     @Override
     public String toString() {

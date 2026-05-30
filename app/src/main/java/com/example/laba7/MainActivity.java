@@ -69,14 +69,29 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void toggleView() {
-        if (!isShowingApplications) {
-            btnToggleView.setText("🏠 Объявления");
-            loadFragment(new ApplicationsFragment());
-            isShowingApplications = true;
+        String role = prefsManager.getUserRole();
+        Long userId = prefsManager.getUserId();
+
+        android.util.Log.d("MAIN_ACTIVITY", "Role: " + role + ", UserId: " + userId);
+
+        if ("AGENT".equals(role)) {
+            if (userId == null || userId <= 0) {
+                Toast.makeText(this, "Ошибка: пользователь не найден", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            Intent intent = new Intent(MainActivity.this, AgentPropertiesActivity.class);
+            intent.putExtra("agent_id", userId);  // 🔧 Передаём
+            android.util.Log.d("MAIN_ACTIVITY", "Передаю agent_id: " + userId);
+            startActivity(intent);
+
         } else {
-            btnToggleView.setText("📥 Заявки");
-            loadFragment(new PropertyListFragment());
-            isShowingApplications = false;
+            // Клиент
+            if (userId != null) {
+                Intent intent = new Intent(MainActivity.this, MyApplicationsActivity.class);
+                intent.putExtra("client_id", userId);
+                startActivity(intent);
+            }
         }
     }
 
@@ -85,9 +100,10 @@ public class MainActivity extends AppCompatActivity {
 
         if ("AGENT".equals(role)) {
             btnToggleView.setVisibility(View.VISIBLE);
-            btnToggleView.setText("📥 Заявки");
-            isShowingApplications = false;
+            btnToggleView.setText("Заявки");
+
             loadFragment(new PropertyListFragment());
+
         } else {
             btnToggleView.setVisibility(View.GONE);
             loadFragment(new PropertyListFragment());
